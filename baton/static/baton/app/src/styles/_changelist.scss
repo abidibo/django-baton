@@ -134,16 +134,11 @@
 
     input[type='submit'] {
       @extend .btn;
+      @extend .btn-primary;
       @extend .btn-sm;
       @extend .ms-2;
-      background: var(--bs-baton-changelist-toolbar-btn-bg);
-      color: var(--bs-baton-changelist-toolbar-btn-color);
       margin-top: -3px;
       max-width: 100px;
-
-      &:hover {
-        background: var(--bs-baton-changelist-toolbar-btn-hover-bg);
-      }
     }
   }
 
@@ -365,12 +360,10 @@
 
       button {
         @extend .btn;
+        @extend .btn-primary;
         @extend .btn-sm;
         @extend .ms-2;
         @extend .me-2;
-
-        background: var(--bs-baton-changelist-toolbar-btn-bg);
-        color: var(--bs-baton-changelist-toolbar-btn-color);
       }
 
       .all.hidden,
