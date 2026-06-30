@@ -3,6 +3,7 @@ class AIModels:
     BATON_GPT_4_TURBO = 'gpt-4-turbo'
     BATON_GPT_4O = 'gpt-4o'
     BATON_GPT_4O_MINI = 'gpt-4o-mini'
+    BATON_GPT_5_4 = 'gpt-5.4'
     BATON_GPT_IMAGE_1_5 = 'gpt-image-1.5'
 
     text_models = [
@@ -10,6 +11,7 @@ class AIModels:
         BATON_GPT_4_TURBO,
         BATON_GPT_4O,
         BATON_GPT_4O_MINI,
+        BATON_GPT_5_4,
     ]
     image_models = [
         BATON_GPT_IMAGE_1_5,
