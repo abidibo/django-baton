@@ -74,6 +74,14 @@ const AI = {
       reader.onerror = (error) => reject(error)
     })
   },
+  async urlToBase64(url) {
+    // fetch a same-origin image (e.g. an already saved one) and turn it into a
+    // base64 data url, so we can send the bytes inline instead of a url the
+    // remote AI api may not be able to reach (e.g. localhost during development)
+    const response = await fetch(url)
+    const blob = await response.blob()
+    return this.getBase64(blob)
+  },
   activateTranslations: function () {
     // check if form has fields that need translation
     let hasTranslations = false
@@ -261,8 +269,17 @@ const AI = {
     if ($(field).prop('files').length > 0) {
       const file = $(field).prop('files')[0]
       url = await this.getBase64(file)
-    } else if (relativePath !== '#') {
-      url = window.location.origin + relativePath
+    } else if (relativePath && relativePath !== '#') {
+      // the saved image is served by this (possibly local) server: read it from
+      // the page and send it as base64, so the remote api does not need to fetch
+      // a url it may not reach (e.g. localhost). fall back to the raw url on error
+      const absoluteUrl = window.location.origin + relativePath
+      try {
+        url = await this.urlToBase64(absoluteUrl)
+      } catch (err) {
+        console.log(err)
+        url = absoluteUrl
+      }
     }
 
     const payload = {
