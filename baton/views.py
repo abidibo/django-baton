@@ -4,7 +4,6 @@ import json
 import hmac
 import base64
 import time
-import logging
 import requests
 from django.http import JsonResponse
 from django.apps import apps
@@ -19,8 +18,6 @@ from django.utils.encoding import force_str
 from django.utils.text import slugify
 
 from .config import get_config
-
-logger = logging.getLogger(__name__)
 
 BATON_AI_API_BASE_PATH = settings.BATON.get(
     "BATON_AI_API_BASE_PATH", "https://baton.sqrt64.it/api/v1"
@@ -556,9 +553,6 @@ class SuggestTagsView(View):
         }
 
         url_post = f"{BATON_AI_API_BASE_PATH}/tag-suggestions/"
-        payload_json = json.dumps(payload, ensure_ascii=False, indent=2)
-        print(payload_json, flush=True)
-        logger.warning("Baton AI tag suggestions payload:\n%s", payload_json)
         headers, error_response = get_baton_ai_headers()
         if error_response:
             return error_response
