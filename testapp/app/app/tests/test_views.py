@@ -30,23 +30,23 @@ class TestBatonViews(TestCase):
 
     def test_call_view_anonymous(self):
         response = self.client.get(reverse("baton-app-list-json"), follow=True)
-        self.assertRedirects(response, "/admin/login/?next=/baton/app-list-json/")
+        self.assertRedirects(response, "/en/admin/login/?next=/baton/app-list-json/")
         response = self.client.post(reverse("baton-app-list-json"), follow=False)
-        self.assertRedirects(response, "/admin/login/?next=/baton/app-list-json/")
+        self.assertRedirects(response, "/en/admin/login/?next=/baton/app-list-json/")
 
     def test_call_view_user_not_staff(self):
         self.client.login(username="user", password="user")
         response = self.client.get(reverse("baton-app-list-json"), follow=True)
-        self.assertRedirects(response, "/admin/login/?next=/baton/app-list-json/")
+        self.assertRedirects(response, "/en/admin/login/?next=/baton/app-list-json/")
         response = self.client.post(reverse("baton-app-list-json"), follow=False)
-        self.assertRedirects(response, "/admin/login/?next=/baton/app-list-json/")
+        self.assertRedirects(response, "/en/admin/login/?next=/baton/app-list-json/")
 
     def test_call_view_user_staff_inactive(self):
         self.client.login(username="staff_inactive", password="staff_inactive")
         response = self.client.get(reverse("baton-app-list-json"), follow=True)
-        self.assertRedirects(response, "/admin/login/?next=/baton/app-list-json/")
+        self.assertRedirects(response, "/en/admin/login/?next=/baton/app-list-json/")
         response = self.client.post(reverse("baton-app-list-json"), follow=False)
-        self.assertRedirects(response, "/admin/login/?next=/baton/app-list-json/")
+        self.assertRedirects(response, "/en/admin/login/?next=/baton/app-list-json/")
 
     def test_call_view_user_superuser(self):
         self.client.login(username="admin", password="admin")

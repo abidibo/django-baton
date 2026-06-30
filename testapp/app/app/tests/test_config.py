@@ -25,5 +25,5 @@ class TestBatonConfig(TestCase):
         self.assertEqual(get_config("POWERED_BY"), "Otto srl")
         self.assertEqual(
             get_config("COPYRIGHT"),
-            'copyright © 2024 <a href="https://www.otto.to.it">Otto srl</a>',
+            'Copyright © 2026 <a href="https://www.otto.srl">Otto srl</a>',
         )

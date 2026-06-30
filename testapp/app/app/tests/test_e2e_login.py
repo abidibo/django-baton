@@ -45,4 +45,4 @@ class TestBatonLogin(TestCase):
         time.sleep(1)
         button.click()
         time.sleep(2)
-        self.assertEqual(self.driver.current_url, "http://localhost:8000/admin/")
+        self.assertEqual(self.driver.current_url, "http://localhost:8000/en/admin/")

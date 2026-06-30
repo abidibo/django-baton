@@ -78,12 +78,12 @@ class TestBatonMenu(TestCase):
         self.assertEqual(auth_children[0].is_displayed(), False)
         self.assertEqual(
             auth_children[0].find_element(By.TAG_NAME, "a").get_attribute("href"),
-            "http://localhost:8000/admin/auth/user/",
+            "http://localhost:8000/en/admin/auth/user/",
         )
         self.assertEqual(auth_children[1].is_displayed(), False)
         self.assertEqual(
             auth_children[1].find_element(By.TAG_NAME, "a").get_attribute("href"),
-            "http://localhost:8000/admin/auth/group/",
+            "http://localhost:8000/en/admin/auth/group/",
         )
         # open submenu on click
         root_voices[1].click()
@@ -110,7 +110,7 @@ class TestBatonMenu(TestCase):
             "default-open" in root_voices[2].get_attribute("class").split(), True
         )
         news_children = root_voices[2].find_elements(By.CSS_SELECTOR, ".depth-1 li")
-        self.assertEqual(len(news_children), 2)
+        self.assertEqual(len(news_children), 3)
         self.assertEqual(news_children[0].is_displayed(), True)
         self.assertEqual(
             news_children[0].find_element(By.TAG_NAME, "a").get_attribute("href"),
@@ -119,12 +119,18 @@ class TestBatonMenu(TestCase):
         self.assertEqual(news_children[1].is_displayed(), True)
         self.assertEqual(
             news_children[1].find_element(By.TAG_NAME, "a").get_attribute("href"),
-            "http://localhost:8000/admin/news/news/",
+            "http://localhost:8000/en/admin/news/news/",
+        )
+        self.assertEqual(news_children[2].is_displayed(), True)
+        self.assertEqual(
+            news_children[2].find_element(By.TAG_NAME, "a").get_attribute("href"),
+            "http://localhost:8000/en/admin/news/tag/",
         )
         # hide subvoices after click
         root_voices[2].find_element(By.CSS_SELECTOR, "span").click()
         self.assertEqual(news_children[0].is_displayed(), False)
         self.assertEqual(news_children[1].is_displayed(), False)
+        self.assertEqual(news_children[2].is_displayed(), False)
 
         # tools voice
         self.assertEqual(
