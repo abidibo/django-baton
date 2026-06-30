@@ -18,5 +18,6 @@ class AIModels:
     ]
     vision_models = [
         BATON_GPT_4O_MINI,
+        BATON_GPT_5_4,
     ]
     tag_suggestion_models = text_models
