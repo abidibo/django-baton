@@ -526,6 +526,295 @@ const AI = {
     }
     return new_input.files
   },
+  addTagSuggestions: function (fieldName, conf, appLabel, modelName) {
+    const self = this
+    const field = $(`#id_${fieldName}`)
+    if (!field.length) {
+      return
+    }
+
+    const suggestButton = $('<a />', {
+      class: 'btn btn-sm btn-primary mb-2',
+      href: 'javascript:void(0)',
+    })
+      .on('click', function () {
+        self.suggestTags(field, fieldName, conf || {}, appLabel, modelName)
+      })
+      .prepend($('<span class="material-symbols-outlined">sell</span>'))
+      .append($('<span />').text(` ${this.t.get('suggestTags')}`))
+
+    field.after($('<div />').append(suggestButton))
+  },
+  getTagSuggestionSourceFieldId: function (sourceField, conf) {
+    const languages = [
+      this.config.defaultLanguage,
+      ...(this.config.otherLanguages || []),
+    ].filter(Boolean)
+    const candidateIds = [`id_${sourceField}`]
+    languages.forEach(function (language) {
+      const languageCode = language.split('-')[0]
+      candidateIds.push(`id_${sourceField}_${languageCode}`)
+    })
+
+    for (const fieldId of [...new Set(candidateIds)]) {
+      if ($(`#${fieldId}`).length || this.editorFields.includes(fieldId)) {
+        return fieldId
+      }
+    }
+    return null
+  },
+  suggestTags: function (field, fieldName, conf, appLabel, modelName) {
+    const self = this
+    const sourceFields = conf.source_fields || []
+    const content = {}
+    sourceFields.forEach(function (sourceField) {
+      const fieldId = self.getTagSuggestionSourceFieldId(sourceField, conf)
+      if (!fieldId) {
+        return
+      }
+      const value = self.fieldText(fieldId)
+      if (value) {
+        content[sourceField] = self.editorFields.includes(fieldId) ? self.decodeHtml(value) : value
+      }
+    })
+
+    const selected = this.getSelectedTagValues(field)
+
+    const overlay = $('<div />', { class: 'spinner-overlay' }).appendTo(document.body)
+    const spinner = $('<i />', { class: 'material-symbols-outlined icon-spin' }).text('progress_activity')
+    $('<div />').append($('<p />').append(spinner)).appendTo(overlay)
+
+    $.ajax({
+      url: this.config.ai.suggestTagsApiUrl,
+      method: 'POST',
+      data: JSON.stringify({
+        id: field.attr('id'),
+        appLabel: appLabel,
+        modelName: modelName,
+        field: fieldName,
+        content: content,
+        selected: selected,
+        model: self.config.ai.tagSuggestionsModel,
+      }),
+      dataType: 'json',
+      contentType: 'application/json',
+      headers: { 'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val() },
+    })
+      .done(function (data) {
+        overlay.remove()
+        self.showTagSuggestions(field, data.data || {}, {
+          appLabel: appLabel,
+          modelName: modelName,
+          fieldName: fieldName,
+          conf: conf,
+        })
+      })
+      .fail(function (err) {
+        console.log(err)
+        overlay.remove()
+        alert(self.t.get('aiApiError') + ': ' + (err.responseJSON?.data?.message || err.statusText))
+      })
+  },
+  getSelectedTagValues: function (field) {
+    const fieldId = field.attr('id')
+    if (fieldId && /_from$/.test(fieldId)) {
+      const toId = fieldId.replace(/_from$/, '_to')
+      if (window.SelectBox?.cache?.[toId]) {
+        return window.SelectBox.cache[toId].map((item) => item.value)
+      }
+      return $(`#${toId} option`)
+        .map(function () {
+          return $(this).val()
+        })
+        .get()
+    }
+
+    const fieldValue = field.val()
+    return Array.isArray(fieldValue) ? fieldValue : fieldValue ? [fieldValue] : []
+  },
+  showTagSuggestions: function (field, suggestions, context) {
+    const existing = suggestions.existing || []
+    const newTags = suggestions.new || []
+    const content = $('<div />')
+
+    if (!existing.length && !newTags.length) {
+      content.append($('<p />').text(this.t.get('noTagSuggestions')))
+    }
+
+    if (existing.length) {
+      content.append($('<h6 />').text(this.t.get('existingTags')))
+      const list = $('<div />', { class: 'mb-3' }).appendTo(content)
+      existing.forEach(function (tag) {
+        const id = `baton-ai-tag-${tag.id}`
+        const row = $('<div />', { class: 'form-check' }).appendTo(list)
+        $('<input />', {
+          class: 'form-check-input',
+          type: 'checkbox',
+          id: id,
+          value: tag.id,
+          // existing tags below the confidence threshold are shown unchecked
+          checked: tag.preselected !== false,
+        })
+          .attr('data-tag-type', 'existing')
+          .data('label', tag.label)
+          .appendTo(row)
+        $('<label />', { class: 'form-check-label', for: id }).text(tag.label).appendTo(row)
+      })
+    }
+
+    if (newTags.length) {
+      content.append($('<h6 />').text(this.t.get('newTagCandidates')))
+      const list = $('<div />', { class: 'mb-3' }).appendTo(content)
+      newTags.forEach(function (tag, index) {
+        const id = `baton-ai-new-tag-${index}`
+        const row = $('<div />', { class: 'form-check' }).appendTo(list)
+        $('<input />', {
+          class: 'form-check-input',
+          type: 'checkbox',
+          id: id,
+          value: tag.label,
+          checked: true,
+        })
+          .attr('data-tag-type', 'new')
+          .appendTo(row)
+        $('<label />', { class: 'form-check-label', for: id }).text(tag.label).appendTo(row)
+      })
+    }
+
+    const self = this
+    const myModal = new Baton.Modal({
+      title: this.t.get('tagSuggestions'),
+      content: content,
+      size: 'md',
+      actionBtnLabel: this.t.get('useSelectedTags'),
+      actionBtnCb: function () {
+        self.applySelectedTags(field, myModal, context)
+      },
+    })
+    myModal.open()
+  },
+  applySelectedTags: function (field, modal, context) {
+    const self = this
+    const existingTags = []
+    modal.modalObj.find('input[data-tag-type=existing]:checked').each(function () {
+      existingTags.push({
+        id: $(this).val(),
+        label: $(this).data('label'),
+      })
+    })
+
+    const newLabels = []
+    modal.modalObj.find('input[data-tag-type=new]:checked').each(function () {
+      newLabels.push($(this).val())
+    })
+
+    if (newLabels.length) {
+      this.createSelectedTags(context, newLabels, function (createdTags) {
+        self.applyTagObjects(field, existingTags.concat(createdTags))
+        modal.close()
+        modal.destroy()
+      })
+    } else {
+      this.applyTagObjects(field, existingTags)
+      modal.close()
+      modal.destroy()
+    }
+  },
+  createSelectedTags: function (context, labels, cb) {
+    const self = this
+    const overlay = $('<div />', { class: 'spinner-overlay' }).appendTo(document.body)
+    const spinner = $('<i />', { class: 'material-symbols-outlined icon-spin' }).text('progress_activity')
+    $('<div />').append($('<p />').append(spinner)).appendTo(overlay)
+
+    $.ajax({
+      url: this.config.ai.createTagsApiUrl,
+      method: 'POST',
+      data: JSON.stringify({
+        appLabel: context.appLabel,
+        modelName: context.modelName,
+        field: context.fieldName,
+        labels: labels,
+      }),
+      dataType: 'json',
+      contentType: 'application/json',
+      headers: { 'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val() },
+    })
+      .done(function (data) {
+        overlay.remove()
+        cb(data.data?.tags || [])
+      })
+      .fail(function (err) {
+        console.log(err)
+        overlay.remove()
+        alert(self.t.get('aiApiError') + ': ' + (err.responseJSON?.data?.message || err.statusText))
+      })
+  },
+  applyTagObjects: function (field, tags) {
+    if (this.applyTagObjectsToSelectFilter(field, tags)) {
+      return
+    }
+    const currentValue = field.val()
+    const values = Array.isArray(currentValue) ? currentValue : currentValue ? [currentValue] : []
+    tags.forEach(function (tag) {
+      const value = tag.id
+      if (!values.includes(value)) {
+        values.push(value)
+      }
+      if (!field.find(`option[value="${value}"]`).length) {
+        field.append(new Option(tag.label, value, true, true))
+      }
+    })
+    field.val(values).trigger('change')
+  },
+  applyTagObjectsToSelectFilter: function (field, tags) {
+    const fieldId = field.attr('id')
+    if (!fieldId || !/_from$/.test(fieldId) || !window.SelectBox) {
+      return false
+    }
+
+    const fromId = fieldId
+    const toId = fieldId.replace(/_from$/, '_to')
+    if (!document.getElementById(fromId) || !document.getElementById(toId)) {
+      return false
+    }
+
+    if (!window.SelectBox.cache[fromId]) {
+      window.SelectBox.init(fromId)
+    }
+    if (!window.SelectBox.cache[toId]) {
+      window.SelectBox.init(toId)
+    }
+
+    tags.forEach(function (tag) {
+      const value = tag.id
+      if (window.SelectBox.cache_contains(toId, value)) {
+        return
+      }
+
+      const sourceItem = (window.SelectBox.cache[fromId] || []).find((item) => item.value === value)
+      window.SelectBox.add_to_cache(toId, {
+        value: value,
+        text: sourceItem ? sourceItem.text : tag.label,
+        displayed: 1,
+      })
+      if (sourceItem) {
+        window.SelectBox.delete_from_cache(fromId, value)
+      }
+    })
+
+    window.SelectBox.redisplay(fromId)
+    window.SelectBox.redisplay(toId)
+
+    const baseId = fieldId.replace(/_from$/, '')
+    if (window.SelectFilter) {
+      window.SelectFilter.refresh_icons(baseId)
+      window.SelectFilter.refresh_filtered_selects(baseId)
+      window.SelectFilter.refresh_filtered_warning(baseId)
+    }
+
+    $(`#${toId}`).trigger('change')
+    return true
+  },
   correct: function (field, text) {
     const self = this
     const payload = {

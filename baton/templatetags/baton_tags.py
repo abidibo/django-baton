@@ -28,19 +28,22 @@ def get_ai_models(ai_config):
         corrections_model = models.get('CORRECTIONS_MODEL', AIModels.BATON_GPT_4O_MINI)
         images_model = models.get('IMAGES_MODEL', AIModels.BATON_GPT_IMAGE_1_5)
         vision_model = models.get('VISION_MODEL', AIModels.BATON_GPT_4O_MINI)
+        tag_suggestions_model = models.get('TAG_SUGGESTIONS_MODEL', AIModels.BATON_GPT_4O_MINI)
     else: # config
         translations_model = ai_config.get('TRANSLATIONS_MODEL', AIModels.BATON_GPT_4O_MINI)
         summarizations_model = ai_config.get('SUMMARIZATIONS_MODEL', AIModels.BATON_GPT_4O_MINI)
         corrections_model = ai_config.get('CORRECTIONS_MODEL', AIModels.BATON_GPT_4O_MINI)
         images_model = ai_config.get('IMAGES_MODEL', AIModels.BATON_GPT_IMAGE_1_5)
         vision_model = ai_config.get('VISION_MODEL', AIModels.BATON_GPT_4O_MINI)
+        tag_suggestions_model = ai_config.get('TAG_SUGGESTIONS_MODEL', AIModels.BATON_GPT_4O_MINI)
 
     return {
         'TRANSLATIONS_MODEL': translations_model,
         'SUMMARIZATIONS_MODEL': summarizations_model,
         'CORRECTIONS_MODEL': corrections_model,
         'IMAGES_MODEL': images_model,
-        'VISION_MODEL': vision_model
+        'VISION_MODEL': vision_model,
+        'TAG_SUGGESTIONS_MODEL': tag_suggestions_model,
     }
 
 @register.simple_tag
@@ -75,6 +78,7 @@ def baton_config():
             "summarizationsModel": ai_models.get('SUMMARIZATIONS_MODEL', AIModels.BATON_GPT_4O_MINI),
             "imagesModel": ai_models.get('IMAGES_MODEL', AIModels.BATON_GPT_IMAGE_1_5),
             "visionModel": ai_models.get('VISION_MODEL', AIModels.BATON_GPT_4O_MINI),
+            "tagSuggestionsModel": ai_models.get('TAG_SUGGESTIONS_MODEL', AIModels.BATON_GPT_4O_MINI),
             "enableTranslations": ai_config.get('ENABLE_TRANSLATIONS', False) if (get_config('BATON_CLIENT_ID') and get_config('BATON_CLIENT_SECRET')) else False,
             "enableCorrections": ai_config.get('ENABLE_CORRECTIONS', False) if (get_config('BATON_CLIENT_ID') and get_config('BATON_CLIENT_SECRET')) else False,
             "correctionSelectors": ai_config.get('CORRECTION_SELECTORS', ["textarea", "input[type=text]:not(.vDateField):not([name=username]):not([name*=subject_location])"]),
@@ -83,6 +87,8 @@ def baton_config():
             "visionApiUrl": reverse('baton-vision'),
             "generateImageApiUrl": reverse('baton-generate-image'),
             "correctApiUrl": reverse('baton-correct'),
+            "suggestTagsApiUrl": reverse('baton-suggest-tags'),
+            "createTagsApiUrl": reverse('baton-create-tags'),
         },
         "confirmUnsavedChanges": get_config('CONFIRM_UNSAVED_CHANGES'),
         "showMultipartUploading": get_config('SHOW_MULTIPART_UPLOADING'),
@@ -112,6 +118,9 @@ def baton_config():
 
     if conf['ai']['summarizationsModel'] not in AIModels.text_models:
         raise ImproperlyConfigured('Unsupported AI summarization model %s' % conf['ai']['summarizationsModel'])
+
+    if conf['ai']['tagSuggestionsModel'] not in AIModels.tag_suggestion_models:
+        raise ImproperlyConfigured('Unsupported AI tag suggestions model %s' % conf['ai']['tagSuggestionsModel'])
 
     if conf['ai']['imagesModel'] not in AIModels.image_models:
         raise ImproperlyConfigured('Unsupported AI image model %s' % conf['ai']['imagesModel'])

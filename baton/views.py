@@ -4,16 +4,23 @@ import json
 import hmac
 import base64
 import time
+import logging
 import requests
 from django.http import JsonResponse
+from django.apps import apps
 from django.contrib.admin import site
 from django.contrib.admin.views.decorators import staff_member_required
 from django.utils.decorators import method_decorator
-from django.core.exceptions import ImproperlyConfigured
+from django.core.exceptions import FieldDoesNotExist, ImproperlyConfigured
+from django.db import IntegrityError
 from django.views import View
 from django.conf import settings
+from django.utils.encoding import force_str
+from django.utils.text import slugify
 
 from .config import get_config
+
+logger = logging.getLogger(__name__)
 
 BATON_AI_API_BASE_PATH = settings.BATON.get(
     "BATON_AI_API_BASE_PATH", "https://baton.sqrt64.it/api/v1"
@@ -469,3 +476,484 @@ class CorrectView(View):
             {"data": post_response_json, "success": success},
             status=post_response.status_code,
         )
+
+
+class SuggestTagsView(View):
+    @method_decorator(staff_member_required)
+    def dispatch(self, *args, **kwargs):
+        """Only staff members can access this view"""
+        return super(SuggestTagsView, self).dispatch(*args, **kwargs)
+
+    def post(self, request):
+        data = json.loads(request.body)
+        app_label = data.get("appLabel")
+        model_name = data.get("modelName")
+        field_name = data.get("field")
+
+        model_admin, error_response = self.get_model_admin(
+            request,
+            app_label,
+            model_name,
+            field_name,
+        )
+        if error_response:
+            return error_response
+
+        field_config = getattr(model_admin, "baton_tag_suggestion_fields").get(
+            field_name,
+            {},
+        )
+        # Tag suggestions and new tags always use the project default language:
+        # the language is not configurable per field, so new tags are created in
+        # the default (fallback) language and translated later via the AI
+        # translation tool, instead of leaking foreign text into other languages.
+        language = self.get_default_language()
+        label_field = field_config.get("label_field")
+        try:
+            existing_tags = self.get_existing_tags(
+                model_admin.model,
+                field_name,
+                label_field,
+                language,
+                int(field_config.get("existing_limit", 300)),
+            )
+        except ImproperlyConfigured as err:
+            return JsonResponse(
+                {"data": {"message": force_str(err)}, "success": False},
+                status=400,
+            )
+        existing_by_id = {force_str(tag["id"]): tag for tag in existing_tags}
+        existing_by_label = {
+            self.normalize_label(label): tag
+            for tag in existing_tags
+            for label in tag.get("labels", [])
+            if label
+        }
+
+        source_fields = field_config.get("source_fields", [])
+        content = {
+            key: value
+            for key, value in (data.get("content") or {}).items()
+            if not source_fields or key in source_fields
+        }
+        selected = [force_str(value) for value in data.get("selected", [])]
+        max_suggestions = int(field_config.get("max_suggestions", 8))
+        allow_new = field_config.get("allow_new", True)
+        preselect_min_confidence = field_config.get("preselect_min_confidence", 0.8)
+        payload = {
+            "id": data.get("id"),
+            "field": field_name,
+            "content": content,
+            "existingTags": [
+                {"id": tag["id"], "label": tag["label"]}
+                for tag in existing_tags
+            ],
+            "selectedTags": selected,
+            "maxSuggestions": max_suggestions,
+            "allowNew": allow_new,
+            "language": language,
+            "model": data.get("model"),
+        }
+
+        url_post = f"{BATON_AI_API_BASE_PATH}/tag-suggestions/"
+        payload_json = json.dumps(payload, ensure_ascii=False, indent=2)
+        print(payload_json, flush=True)
+        logger.warning("Baton AI tag suggestions payload:\n%s", payload_json)
+        headers, error_response = get_baton_ai_headers()
+        if error_response:
+            return error_response
+        post_response = requests.post(
+            url_post,
+            json=payload,
+            headers=headers,
+        )
+
+        post_response_json = post_response.json()
+        success = post_response.status_code == 200
+        if success:
+            post_response_json = self.normalize_ai_response(
+                post_response_json,
+                existing_by_id,
+                existing_by_label,
+                selected,
+                allow_new,
+                max_suggestions,
+                preselect_min_confidence,
+            )
+
+        return JsonResponse(
+            {"data": post_response_json, "success": success},
+            status=post_response.status_code,
+        )
+
+    def get_model_admin(self, request, app_label, model_name, field_name):
+        try:
+            model = apps.get_model(app_label, model_name)
+        except (LookupError, ValueError):
+            model = None
+        if not model or model not in site._registry:
+            return None, JsonResponse(
+                {"data": {"message": "Unknown admin model."}, "success": False},
+                status=400,
+            )
+
+        model_admin = site._registry[model]
+        config = getattr(model_admin, "baton_tag_suggestion_fields", {}) or {}
+        if field_name not in config:
+            return None, JsonResponse(
+                {
+                    "data": {
+                        "message": (
+                            "Tag suggestions are not configured for this field."
+                        ),
+                    },
+                    "success": False,
+                },
+                status=400,
+            )
+
+        has_permission = (
+            model_admin.has_view_permission(request)
+            or model_admin.has_change_permission(request)
+            or model_admin.has_add_permission(request)
+        )
+        if not has_permission:
+            return None, JsonResponse(
+                {"data": {"message": "Permission denied."}, "success": False},
+                status=403,
+            )
+
+        return model_admin, None
+
+    def get_existing_tags(self, model, field_name, label_field, language, limit):
+        try:
+            field = model._meta.get_field(field_name)
+        except FieldDoesNotExist:
+            raise ImproperlyConfigured(
+                "Unknown tag suggestion field %s." % field_name
+            )
+        if not field.many_to_many:
+            raise ImproperlyConfigured(
+                "baton_tag_suggestion_fields supports ManyToManyField fields."
+            )
+
+        related_model = field.remote_field.model
+        label_field = label_field or self.get_default_label_field(related_model)
+        tags = []
+        for item in related_model._default_manager.all()[:limit]:
+            labels = self.get_label_values(item, label_field, language)
+            tags.append(
+                {
+                    "id": force_str(item.pk),
+                    "label": labels[0] if labels else force_str(item),
+                    "labels": labels,
+                }
+            )
+        return tags
+
+    def get_default_label_field(self, model):
+        field_names = [field.name for field in model._meta.fields]
+        for candidate in ("name", "title", "label", "slug"):
+            if candidate in field_names:
+                return candidate
+        return None
+
+    def get_label_values(self, item, label_field, language):
+        if not label_field:
+            return [force_str(item)]
+
+        labels = []
+        language_code = (language or "").split("-")[0]
+        localized_field = "%s_%s" % (label_field, language_code)
+        if language_code and hasattr(item, localized_field):
+            value = getattr(item, localized_field)
+            if value:
+                labels.append(force_str(value))
+
+        if hasattr(item, label_field):
+            value = getattr(item, label_field)
+            if value:
+                labels.append(force_str(value))
+
+        for field in item._meta.fields:
+            if field.name.startswith("%s_" % label_field):
+                value = getattr(item, field.name)
+                if value:
+                    labels.append(force_str(value))
+
+        labels.append(force_str(item))
+        return list(dict.fromkeys(labels))
+
+    def get_default_language(self):
+        try:
+            return settings.MODELTRANSLATION_DEFAULT_LANGUAGE
+        except AttributeError:
+            return settings.LANGUAGES[0][0]
+
+    def normalize_ai_response(
+        self,
+        data,
+        existing_by_id,
+        existing_by_label,
+        selected,
+        allow_new,
+        max_suggestions,
+        preselect_min_confidence=0.8,
+    ):
+        suggestions = data.get("data", data)
+        existing_items = suggestions.get("existing", suggestions.get("existingTags", []))
+        new_items = suggestions.get("new", suggestions.get("newTags", []))
+        selected = set(selected)
+
+        existing = []
+        seen_existing = set()
+        for item in existing_items:
+            tag = self.get_existing_tag(item, existing_by_id, existing_by_label)
+            if not tag or tag["id"] in selected or tag["id"] in seen_existing:
+                continue
+            confidence = self.get_confidence(item)
+            existing.append(
+                {
+                    "id": tag["id"],
+                    "label": tag["label"],
+                    "confidence": confidence,
+                    # Existing tags below the threshold are still shown but not
+                    # preselected: the AI tends to force a weakly related tag
+                    # (e.g. "Technology" on a tennis article), so the user opts
+                    # in instead of having to deselect it.
+                    "preselected": self.is_preselected(
+                        confidence, preselect_min_confidence
+                    ),
+                }
+            )
+            seen_existing.add(tag["id"])
+            if len(existing) >= max_suggestions:
+                break
+
+        new = []
+        seen_new = set()
+        if allow_new:
+            for item in new_items:
+                label = self.get_label(item)
+                normalized = self.normalize_label(label)
+                if (
+                    not label
+                    or normalized in seen_new
+                    or normalized in existing_by_label
+                ):
+                    continue
+                new.append(
+                    {
+                        "label": label,
+                        "confidence": self.get_confidence(item),
+                    }
+                )
+                seen_new.add(normalized)
+                if len(existing) + len(new) >= max_suggestions:
+                    break
+
+        return {
+            "existing": existing,
+            "new": new,
+        }
+
+    def get_existing_tag(self, item, existing_by_id, existing_by_label):
+        if isinstance(item, dict):
+            item_id = item.get("id") or item.get("pk") or item.get("value")
+            label = item.get("label") or item.get("name")
+        else:
+            item_id = item
+            label = item
+
+        if item_id is not None and force_str(item_id) in existing_by_id:
+            return existing_by_id[force_str(item_id)]
+
+        normalized = self.normalize_label(label)
+        if normalized in existing_by_label:
+            return existing_by_label[normalized]
+
+        return None
+
+    def get_label(self, item):
+        if isinstance(item, dict):
+            return item.get("label") or item.get("name") or ""
+        return force_str(item)
+
+    def get_confidence(self, item):
+        if isinstance(item, dict):
+            return item.get("confidence") or item.get("score")
+        return None
+
+    def is_preselected(self, confidence, threshold):
+        # When the AI returns no confidence, keep the previous behaviour and
+        # preselect the tag.
+        if confidence is None:
+            return True
+        try:
+            return float(confidence) >= float(threshold)
+        except (TypeError, ValueError):
+            return True
+
+    def normalize_label(self, label):
+        return slugify(force_str(label or "")).lower()
+
+
+class CreateTagsView(SuggestTagsView):
+    @method_decorator(staff_member_required)
+    def dispatch(self, *args, **kwargs):
+        """Only staff members can access this view"""
+        return super(CreateTagsView, self).dispatch(*args, **kwargs)
+
+    def post(self, request):
+        data = json.loads(request.body)
+        app_label = data.get("appLabel")
+        model_name = data.get("modelName")
+        field_name = data.get("field")
+
+        model_admin, error_response = self.get_model_admin(
+            request,
+            app_label,
+            model_name,
+            field_name,
+        )
+        if error_response:
+            return error_response
+
+        field_config = getattr(model_admin, "baton_tag_suggestion_fields").get(
+            field_name,
+            {},
+        )
+        if not field_config.get("allow_new", True):
+            return JsonResponse(
+                {
+                    "data": {
+                        "message": "Creating new tags is disabled for this field.",
+                    },
+                    "success": False,
+                },
+                status=400,
+            )
+
+        try:
+            field = model_admin.model._meta.get_field(field_name)
+        except FieldDoesNotExist:
+            return JsonResponse(
+                {"data": {"message": "Unknown tag field."}, "success": False},
+                status=400,
+            )
+        if not field.many_to_many:
+            return JsonResponse(
+                {
+                    "data": {
+                        "message": (
+                            "baton_tag_suggestion_fields supports "
+                            "ManyToManyField fields."
+                        ),
+                    },
+                    "success": False,
+                },
+                status=400,
+            )
+
+        related_model = field.remote_field.model
+        if not self.has_related_add_permission(request, related_model):
+            return JsonResponse(
+                {"data": {"message": "Permission denied."}, "success": False},
+                status=403,
+            )
+
+        language = self.get_default_language()
+        label_field = field_config.get("label_field") or self.get_default_label_field(
+            related_model,
+        )
+        if not label_field:
+            return JsonResponse(
+                {
+                    "data": {
+                        "message": "Cannot infer a label field for new tags.",
+                    },
+                    "success": False,
+                },
+                status=400,
+            )
+
+        labels = [
+            force_str(label).strip()
+            for label in data.get("labels", [])
+            if force_str(label).strip()
+        ]
+        labels = list(dict.fromkeys(labels))
+        if not labels:
+            return JsonResponse({"data": {"tags": []}, "success": True})
+
+        existing_tags = self.get_existing_tags(
+            model_admin.model,
+            field_name,
+            label_field,
+            language,
+            int(field_config.get("existing_limit", 300)),
+        )
+        existing_by_label = {
+            self.normalize_label(label): tag
+            for tag in existing_tags
+            for label in tag.get("labels", [])
+            if label
+        }
+
+        tags = []
+        seen_labels = set(existing_by_label.keys())
+        for label in labels:
+            normalized = self.normalize_label(label)
+            if normalized in existing_by_label:
+                tag = existing_by_label[normalized]
+                tags.append({"id": tag["id"], "label": tag["label"]})
+                continue
+            if normalized in seen_labels:
+                continue
+
+            item = related_model()
+            self.set_tag_label(item, label_field, label)
+            try:
+                item.save()
+            except IntegrityError:
+                return JsonResponse(
+                    {
+                        "data": {
+                            "message": (
+                                "Cannot create tag '%s' because it already "
+                                "exists or violates a database constraint."
+                            )
+                            % label,
+                        },
+                        "success": False,
+                    },
+                    status=400,
+                )
+            tag = {"id": force_str(item.pk), "label": label}
+            tags.append(tag)
+            seen_labels.add(normalized)
+            existing_by_label[normalized] = tag
+
+        return JsonResponse(
+            {"data": {"tags": tags}, "success": True},
+        )
+
+    def has_related_add_permission(self, request, related_model):
+        related_admin = site._registry.get(related_model)
+        if related_admin:
+            return related_admin.has_add_permission(request)
+
+        opts = related_model._meta
+        return request.user.has_perm("%s.add_%s" % (opts.app_label, opts.model_name))
+
+    def set_tag_label(self, item, label_field, label):
+        field_names = [field.name for field in item._meta.fields]
+        # Base column (kept in sync with the default language by modeltranslation)
+        if label_field in field_names:
+            item.__dict__[label_field] = label
+        # Populate the base field and every localized variant with the default
+        # language label, so the tag is usable in all languages out of the box;
+        # the other languages can be edited manually afterwards.
+        for name in field_names:
+            if name == label_field or name.startswith("%s_" % label_field):
+                setattr(item, name, label)

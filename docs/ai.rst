@@ -77,6 +77,39 @@ In this modal you can edit the ``words`` and ``useBulletedList`` parameters and 
 
 All default fields and CKEditor fields are supported out of the box. Other rich-text editors (e.g. Editor.js via ``dj-editor-js``) plug in through editor adapters, see the Editor Adapters section below.
 
+Tag Suggestions
+---------------
+
+In your ``ModelAdmin`` classes you can define tag fields that can be completed with AI suggestions based on other fields in the same change form::
+
+    class MyModelAdmin(admin.ModelAdmin):
+        # ...
+        baton_tag_suggestion_fields = {
+            "tags": {
+                "source_fields": ["title", "summary", "body"],
+                "label_field": "name",
+                "max_suggestions": 8,
+                "allow_new": True,
+            },
+        }
+
+The configured field must be a standard Django ``ManyToManyField``. Clicking the generated button sends the configured ``source_fields`` values and the existing tag labels to Baton AI. Existing tags are always preferred and are returned to the browser by id, so the form can select the original related objects instead of creating duplicates. New tag candidates are selectable in the confirmation modal; when selected, Baton creates the related tag objects server-side before adding them to the form.
+
+You can optionally specify the following parameters:
+
+- ``source_fields``: fields used as context for the suggestions
+- ``label_field``: field used as tag label, defaulting to ``name``, ``title``, ``label`` or ``slug`` when available
+- ``max_suggestions``: maximum number of suggestions, default is 8
+- ``allow_new``: if new tag labels can be suggested, default is ``True``
+- ``existing_limit``: maximum number of existing tags sent as candidates, default is 300
+- ``preselect_min_confidence``: existing tag suggestions are always shown, but only those whose AI confidence is at least this value are preselected (checked) in the confirmation modal, default is ``0.8``. This avoids auto-selecting weakly related existing tags that the AI sometimes forces; new tag candidates are not affected.
+
+Tag suggestions and new tags always use the project default language (``MODELTRANSLATION_DEFAULT_LANGUAGE``, or the first of ``LANGUAGES``). The language is not configurable per field. New tags are created with the default language label, which is also copied into every other language field so the tag is usable everywhere out of the box; the other languages can be edited or translated manually afterwards.
+
+When ``django-modeltranslation`` is used on the edited model, ``source_fields`` can use the base field names (e.g. ``title``). Baton will try the exact form field first and then the localized variants for the default language and the other project languages (e.g. ``title_en``, ``title_it``).
+
+When ``django-modeltranslation`` is used on the tag model, Baton looks for the default language label field first (e.g. ``name_en``), then falls back to the base label field and other translated values. New tags are created with the default language label copied into all language fields. Deduplication still happens on the tag record id and normalized labels, not only on the displayed string.
+
 Image Generation
 ----------------
 

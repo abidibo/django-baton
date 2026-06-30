@@ -99,6 +99,11 @@ export const messages = {
     it: 'Riassumi in',
     es: 'Resumen en',
   },
+  existingTags: {
+    en: 'Existing tags',
+    it: 'Tag esistenti',
+    es: 'Etiquetas existentes',
+  },
   imageGenerationError: {
     en: 'There was an error generating the image',
     it: 'Si è verificato un errore nella generazione dell’immagine',
@@ -124,6 +129,16 @@ export const messages = {
     it: 'Originale',
     es: 'Original',
   },
+  newTagCandidates: {
+    en: 'New tag candidates',
+    it: 'Nuovi tag candidati',
+    es: 'Nuevas etiquetas candidatas',
+  },
+  noTagSuggestions: {
+    en: 'No tag suggestions found',
+    it: 'Nessun suggerimento tag trovato',
+    es: 'No se encontraron sugerencias de etiquetas',
+  },
   retrieveDataError: {
     en: 'There was an error retrieving the data',
     it: 'Si è verificato un errore nel reuperare i dati',
@@ -148,6 +163,16 @@ export const messages = {
     en: 'Summ API cost',
     it: 'Costo riassunto',
     es: 'Costo de resumen',
+  },
+  suggestTags: {
+    en: 'Suggest tags',
+    it: 'Suggerisci tag',
+    es: 'Sugerir etiquetas',
+  },
+  tagSuggestions: {
+    en: 'Tag suggestions',
+    it: 'Suggerimenti tag',
+    es: 'Sugerencias de etiquetas',
   },
   TotalCost: {
     en: 'Total cost',
@@ -193,6 +218,11 @@ export const messages = {
     en: 'Use image',
     it: 'Usa immagine',
     es: 'Usar imagen',
+  },
+  useSelectedTags: {
+    en: 'Use selected tags',
+    it: 'Usa tag selezionati',
+    es: 'Usar etiquetas seleccionadas',
   },
   VisionApiCalls: {
     en: 'Vision API calls',

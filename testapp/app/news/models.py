@@ -47,6 +47,17 @@ class Category(models.Model):
         return "{0}".format(self.name)
 
 
+class Tag(models.Model):
+    name = models.CharField('name', max_length=80, unique=True)
+
+    class Meta:
+        verbose_name = "tag"
+        verbose_name_plural = "tags"
+
+    def __str__(self):
+        return "{0}".format(self.name)
+
+
 class News(models.Model):
     class Status(models.IntegerChoices):
         DRAFT = 1, "draft"
@@ -74,6 +85,7 @@ class News(models.Model):
     # summarization target (set via Baton AI).
     body = EditorJSField('body', blank=True, null=True)
     body_summary = EditorJSField('body summary', blank=True, null=True)
+    tags = models.ManyToManyField(Tag, verbose_name='tags', blank=True)
     share = models.BooleanField(default=False)
     published = models.BooleanField(default=False)
     attachments_summary = models.TextField('attachments summary', blank=True)

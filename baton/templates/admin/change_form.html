@@ -41,4 +41,14 @@
     {% endfor %}
 {% endif %}
 
+{% if adminform.model_admin.baton_tag_suggestion_fields %}
+    {% for field, item in adminform.model_admin.baton_tag_suggestion_fields.items %}
+        <script>
+            Baton.Dispatcher.register('onReady', function () {
+                Baton.AI.addTagSuggestions('{{ field }}', {{ item|to_json|safe }}, '{{ opts.app_label }}', '{{ opts.model_name }}');
+            })
+        </script>
+    {% endfor %}
+{% endif %}
+
 {% endblock %}

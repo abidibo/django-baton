@@ -8,6 +8,8 @@ from .views import (
     TranslateView,
     GenerateImageView,
     CorrectView,
+    SuggestTagsView,
+    CreateTagsView,
 )
 
 urlpatterns = [
@@ -18,4 +20,6 @@ urlpatterns = [
     path("vision/", VisionView.as_view(), name="baton-vision"),
     path("generate-image/", GenerateImageView.as_view(), name="baton-generate-image"),
     path("correct/", CorrectView.as_view(), name="baton-correct"),
+    path("suggest-tags/", SuggestTagsView.as_view(), name="baton-suggest-tags"),
+    path("create-tags/", CreateTagsView.as_view(), name="baton-create-tags"),
 ]

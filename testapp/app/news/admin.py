@@ -9,7 +9,7 @@ from admin_auto_filters.filters import AutocompleteFilter
 from modeltranslation.admin import TranslationAdmin
 
 from .forms import ActivityForm
-from .models import News, Category, Attachment, Video, Activity
+from .models import News, Category, Attachment, Video, Activity, Tag
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 
@@ -36,6 +36,12 @@ class CategoryFilter(AutocompleteFilter):
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
+    list_display = ("name",)
+    search_fields = ("name",)
+
+
+@admin.register(Tag)
+class TagAdmin(TranslationAdmin):
     list_display = ("name",)
     search_fields = ("name",)
 
@@ -108,6 +114,7 @@ class NewsAdmin(ImportExportModelAdmin, TranslationAdmin):
     )
     search_fields = ("title",)
     autocomplete_fields = ("category",)
+    filter_horizontal = ("tags",)
     list_editable = ("published",)
     inlines = [
         AttachmentsInline,
@@ -146,6 +153,7 @@ class NewsAdmin(ImportExportModelAdmin, TranslationAdmin):
                     "summary",
                     "body",
                     "body_summary",
+                    "tags",
                     "status",
                 ),
                 "classes": ("tab-fs-content",),
@@ -210,6 +218,23 @@ class NewsAdmin(ImportExportModelAdmin, TranslationAdmin):
                 "useBulletedList": True,
             },
         ],
+    }
+
+    baton_tag_suggestion_fields = {
+        "tags": {
+            "source_fields": [
+                "title",
+                "content",
+                "summary",
+                "body",
+                "body_summary",
+                "attachments_summary",
+                "videos_summary",
+            ],
+            "label_field": "name",
+            "max_suggestions": 8,
+            "allow_new": True,
+        },
     }
 
     baton_form_includes = [
