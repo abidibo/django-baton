@@ -6,7 +6,9 @@ Starting from 4.0.0, the new AI functionalities are available:
 - Automatic translations with django-modeltranslation
 - Text corrections
 - Text summarization
+- Tag suggestions
 - Image generation
+- Image vision (alt text generation)
 
 You can choose which AI model to use for each functionality, see the Configuration section.
 

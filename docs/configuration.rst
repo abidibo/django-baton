@@ -45,6 +45,7 @@ This is an example of configuration::
             'VISION_MODEL': AIModels.BATON_GPT_4O_MINI,
             'SUMMARIZATIONS_MODEL': AIModels.BATON_GPT_4O_MINI,
             'TRANSLATIONS_MODEL': AIModels.BATON_GPT_4O,
+            'TAG_SUGGESTIONS_MODEL': AIModels.BATON_GPT_4O_MINI,
             'ENABLE_TRANSLATIONS': True,
             'ENABLE_CORRECTIONS': True,
             'CORRECTION_SELECTORS': ["textarea", "input[type=text]:not(.vDateField):not([name=username]):not([name*=subject_location])"],
@@ -288,6 +289,7 @@ You can set the models used with  a simple configuration:::
         "IMAGES_MODEL": AIModels.BATON_GPT_IMAGE_1_5,
         "SUMMARIZATIONS_MODEL": AIModels.BATON_GPT_4O_MINI,
         "TRANSLATIONS_MODEL": AIModels.BATON_GPT_4O,
+        "TAG_SUGGESTIONS_MODEL": AIModels.BATON_GPT_4O_MINI,
         # ...
     },
 
@@ -308,6 +310,7 @@ Or you can set the path to the function which returns the models dictionary:::
             "IMAGES_MODEL": AIModels.BATON_GPT_IMAGE_1_5,
             "SUMMARIZATIONS_MODEL": AIModels.BATON_GPT_4O_MINI,
             "TRANSLATIONS_MODEL": AIModels.BATON_GPT_4O,
+            "TAG_SUGGESTIONS_MODEL": AIModels.BATON_GPT_4O_MINI,
         }
 
 If you don't set any of the models, the default models (`BATON_GPT_4O_MINI` and `BATON_GPT_IMAGE_1_5`) will be used.

@@ -83,6 +83,7 @@ Baton is designed with a core principle: **minimize overriding Django templates*
 * **🧠 AI Powered:**
   * Automatic translations (integrates with `django-modeltranslation`).
   * Text summarization and correction.
+  * Tag suggestions for `ManyToManyField` tag fields, based on the other form fields.
   * Image vision (description generation for `alt` text).
   * Image generation with GPT Image.
   * *(Requires a Baton subscription key for AI features).*
@@ -269,8 +270,8 @@ Django Baton integrates AI to assist with content creation and management.
 
 **Available Models (in `baton.ai.AIModels`):**
 
-* `BATON_GPT_3_5_TURBO`, `BATON_GPT_4_TURBO`, `BATON_GPT_4O`: For translations, summarizations, corrections.
-* `BATON_GPT_4O_MINI`: Default for non-image text tasks and image vision.
+* `BATON_GPT_3_5_TURBO`, `BATON_GPT_4_TURBO`, `BATON_GPT_4O`: For translations, summarizations, corrections, tag suggestions.
+* `BATON_GPT_4O_MINI`: Default for non-image text tasks (including tag suggestions) and image vision.
 * `BATON_GPT_IMAGE_1_5`: Default for image generation.
 
 **Configuration:**
@@ -280,6 +281,7 @@ Set preferred models in `BATON['AI']`:
 "AI": {
     "IMAGES_MODEL": AIModels.BATON_GPT_IMAGE_1_5,
     "VISION_MODEL": AIModels.BATON_GPT_4O_MINI,
+    "TAG_SUGGESTIONS_MODEL": AIModels.BATON_GPT_4O_MINI,
     # ... etc.
 }
 ```
@@ -318,7 +320,7 @@ Requires `django-modeltranslation`. Enable and set model:
 An icon appears near fields matching selectors for corrections. Ctrl + Left Click also triggers.
 ![AI Corrections Screenshot](docs/images/ai-corrections.png)
 
-**Summarizations, Image Vision & Generation:**
+**Summarizations, Tag Suggestions, Image Vision & Generation:**
 Detailed in the [Baton AI In-Depth](#baton-ai-in-depth) section.
 
 ### <a name="menu-configuration">Menu Configuration</a>
@@ -432,6 +434,37 @@ class MyModelAdmin(admin.ModelAdmin):
 ```
 
 Buttons appear near the source field to generate summaries for target fields. Parameters (`words`, `useBulletedList`) can be edited in the UI. Supports default fields and CKEditor. See [AI Hooks](#ai-hooks).
+
+### Tag Suggestions
+
+Define `baton_tag_suggestion_fields` in your `ModelAdmin` to let the AI suggest tags for a `ManyToManyField`, using the other fields of the same change form as context:
+
+```python
+# admin.py
+class MyModelAdmin(admin.ModelAdmin):
+    # ...
+    baton_tag_suggestion_fields = {
+        "tags": {                                  # a ManyToManyField
+            "source_fields": ["title", "summary", "body"],
+            "label_field": "name",
+            "max_suggestions": 8,
+            "allow_new": True,
+        },
+    }
+```
+
+Clicking the generated button sends the `source_fields` values and the existing tag labels to Baton AI. Existing tags are always preferred and returned by id, so the form selects the original related objects instead of creating duplicates. New tag candidates can be selected in the confirmation modal; when selected, Baton creates the related tag objects server-side before adding them to the form.
+
+Optional parameters:
+
+* `source_fields`: fields used as context for the suggestions.
+* `label_field`: field used as the tag label (defaults to `name`, `title`, `label` or `slug` when available).
+* `max_suggestions`: maximum number of suggestions (default `8`).
+* `allow_new`: whether new tag labels can be suggested (default `True`).
+* `existing_limit`: maximum number of existing tags sent as candidates (default `300`).
+* `preselect_min_confidence`: existing tags are always shown, but only those whose AI confidence is at least this value are preselected in the modal (default `0.8`).
+
+Tag suggestions always use the project default language (`MODELTRANSLATION_DEFAULT_LANGUAGE`, or the first of `LANGUAGES`); it is not configurable per field. When `django-modeltranslation` is used, `source_fields` may use base field names (Baton tries the exact field first, then the localized variants), and new tags are created with the default language label copied into all language fields. The model used can be set via `TAG_SUGGESTIONS_MODEL` (see [AI Configuration](#ai-configuration)).
 
 ### Image Generation
 
