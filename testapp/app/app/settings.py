@@ -150,7 +150,7 @@ BATON = {
     "SITE_TITLE": "Baton Test App",
     "INDEX_TITLE": "Baton administration",
     "SUPPORT_HREF": "mailto:mail@otto.to.it",
-    "COPYRIGHT": 'copyright © 2024 <a href="https://www.otto.to.it">Otto srl</a>',  # noqa
+    "COPYRIGHT": 'Copyright © 2026 <a href="https://www.otto.srl">Otto srl</a>',  # noqa
     "POWERED_BY": "Otto srl",
     "CONFIRM_UNSAVED_CHANGES": False,
     "SHOW_MULTIPART_UPLOADING": True,
