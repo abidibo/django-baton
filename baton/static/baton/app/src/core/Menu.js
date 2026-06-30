@@ -281,8 +281,48 @@ const Menu = {
       }
       linksContainer.append(clone)
     })
+    this.renderLanguageSwitcher(linksContainer)
+  },
+  renderLanguageSwitcher: function (linksContainer) {
+    const self = this
+    const form = $('form[data-baton-language-switcher]')
+    if (form.length === 0) {
+      return
+    }
+    const select = form.find('select')
+    const options = select.find('option')
+    if (options.length < 2) {
+      return
+    }
+    // the raw form is replaced by the sidebar dropdown, it stays in the dom as submit target
+    form.hide()
+    const wrapper = $('<div />', { class: 'dropdown language-switcher' })
+    const toggle = $('<a />', {
+      class: 'language',
+      href: '#',
+      title: self.t.get('language'),
+    }).attr('data-bs-toggle', 'dropdown')
+    const menu = $('<div />', { class: 'dropdown-menu' })
+    options.each(function () {
+      const code = $(this).attr('value')
+      $('<a />', {
+        class: 'dropdown-item' + ($(this).is(':selected') ? ' active' : ''),
+        href: '#',
+      })
+        .text($(this).text())
+        .on('click', function (e) {
+          e.preventDefault()
+          select.val(code)
+          form[0].submit()
+        })
+        .appendTo(menu)
+    })
+    wrapper.append([toggle, menu])
+    linksContainer.append(wrapper)
   },
   removeUserTools: function () {
+    // on mobile the sidebar dropdown is gone, restore the raw language form in the header
+    $('form[data-baton-language-switcher]').show()
     $('#user-tools-sidebar').remove()
   },
   fetchData: function () {

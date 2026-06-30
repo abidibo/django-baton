@@ -119,6 +119,11 @@ export const messages = {
     it: 'Costo immagini',
     es: 'Costo de imagenes',
   },
+  language: {
+    en: 'Language',
+    it: 'Lingua',
+    es: 'Idioma',
+  },
   lightTheme: {
     en: 'Light theme',
     it: 'Tema chiaro',

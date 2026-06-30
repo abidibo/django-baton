@@ -163,6 +163,17 @@ body:not(.menu-mobile) {
         }
       }
 
+      &.language {
+        cursor: pointer;
+
+        &::after {
+          content: 'language';
+          @extend %material;
+          font-size: 26px;
+          line-height: 26px;
+        }
+      }
+
       &.logout {
         cursor: pointer;
         display: inline-block;
@@ -180,6 +191,30 @@ body:not(.menu-mobile) {
         font-size: 1.3rem;
         display: inline-block;
         margin: 0 0.6rem;
+      }
+    }
+
+    .language-switcher {
+      align-items: center;
+      display: inline-flex;
+
+      .dropdown-menu {
+        min-width: auto;
+        text-align: left;
+
+        .dropdown-item {
+          color: var(--bs-dropdown-link-color) !important;
+          cursor: pointer;
+          padding: 0.25rem 1rem;
+
+          &.active {
+            color: var(--bs-dropdown-link-active-color) !important;
+          }
+
+          &::after {
+            display: none;
+          }
+        }
       }
     }
   }

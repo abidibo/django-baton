@@ -16,21 +16,31 @@ Including another URLconf
 from baton.autodiscover import admin
 from django.urls import path, include, re_path
 from django.conf import settings
+from django.conf.urls.i18n import i18n_patterns
 from django.views import static
 from django.contrib.staticfiles.views import serve
 from app.views import admin_search
 from news.views import news_change_view
 
+# Non-localized urls: the set_language view and API/asset endpoints. These must
+# keep stable paths (e.g. admin/search/ is hardcoded in the BATON SEARCH_FIELD
+# config) and don't need a language prefix.
 urlpatterns = [
-    path('admin/doc/', include('django.contrib.admindocs.urls')),
+    path('i18n/', include('django.conf.urls.i18n')),
     path('admin/search/', admin_search),
-    # path('admin/newschange/<int:id>', news_change_view),
-    path('admin/', admin.site.urls),
     path('baton/', include('baton.urls')),
     path("select2/", include("django_select2.urls")),
     path('tinymce/', include('tinymce.urls')),
     path('editor-js/', include('editor_js.urls')),
 ]
+
+# Localized urls: admin pages get a language prefix (/en/admin/, /it/admin/) so
+# the active language is reflected in the url.
+urlpatterns += i18n_patterns(
+    path('admin/doc/', include('django.contrib.admindocs.urls')),
+    # path('admin/newschange/<int:id>', news_change_view),
+    path('admin/', admin.site.urls),
+)
 
 if settings.DEBUG:
     urlpatterns += [

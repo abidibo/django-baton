@@ -152,6 +152,9 @@ def footer(context):
         'site_title': get_config('SITE_TITLE'),
         'copyright': get_config('COPYRIGHT'),
         'powered_by': get_config('POWERED_BY'),
+        # forwarded so the language switcher form can render csrf + the next path
+        'request': context.get('request'),
+        'csrf_token': context.get('csrf_token'),
     }
 
 

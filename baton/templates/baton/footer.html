@@ -1,4 +1,27 @@
 {% load i18n %}
+{% comment %}
+Hidden language switcher form. It is rendered here (a library template included on
+every admin page via the {% templatetag openblock %} footer {% templatetag closeblock %} tag) so the feature works even when a
+project overrides admin/base_site.html. Baton's Menu.js picks it up by the
+data-baton-language-switcher attribute and turns it into a sidebar dropdown.
+Only rendered when i18n is usable: set_language is reachable and there is more
+than one available language.
+{% endcomment %}
+{% url 'set_language' as baton_set_language_url %}
+{% get_available_languages as BATON_LANGUAGES %}
+{% if baton_set_language_url and BATON_LANGUAGES|length > 1 %}
+    {% get_current_language as BATON_CURRENT_LANGUAGE %}
+    <form action="{{ baton_set_language_url }}" method="post" class="baton-language-switcher d-flex align-items-center justify-content-center" data-baton-language-switcher>
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{% if request %}{{ request.get_full_path }}{% endif %}">
+        <label class="me-2 mb-0" for="baton-language-switcher">{% trans 'Language' %}</label>
+        <select id="baton-language-switcher" name="language" class="form-select form-select-sm w-auto" onchange="this.form.submit()">
+            {% for code, name in BATON_LANGUAGES %}
+                <option value="{{ code }}"{% if code == BATON_CURRENT_LANGUAGE %} selected{% endif %}>{{ name }}</option>
+            {% endfor %}
+        </select>
+    </form>
+{% endif %}
 <div id="footer" class="site-footer">
     <div class="container-fluid">
         <div class="row align-items-center">
