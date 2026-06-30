@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import User
-from tinymce.models import HTMLField
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericRelation
@@ -78,8 +77,6 @@ class News(models.Model):
     image = BatonAiImageField(upload_to='news/img', alt_field='image_alt', subject_location_field='image_subject_location', null=True, blank=True)
     image_alt = models.CharField('image alt', max_length=50, blank=True, null=True)
     image_subject_location = models.CharField('image subject location', max_length=7, blank=True, null=True, default='50,50')
-    content = HTMLField(verbose_name='content', help_text='html is supported')
-    summary = HTMLField('summary', blank=True, null=True)
     # Editor.js fields, used to test django-baton AI integration with django-editor-js.
     # `body` is translatable (translation + correction); `body_summary` is a
     # summarization target (set via Baton AI).

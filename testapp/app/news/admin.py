@@ -149,8 +149,6 @@ class NewsAdmin(ImportExportModelAdmin, TranslationAdmin):
                 "fields": (
                     ("category", "link"),
                     "title",
-                    "content",
-                    "summary",
                     "body",
                     "body_summary",
                     "tags",
@@ -201,14 +199,6 @@ class NewsAdmin(ImportExportModelAdmin, TranslationAdmin):
     )
 
     baton_summarize_fields = {
-        "content_en": [
-            {  # e.g., 'body_it'
-                "target": "summary",  # e.g., 'summary_it'
-                "words": 80,  # Approximate
-                "useBulletedList": True,
-            },
-            # ... more targets for the same source field ...
-        ],
         # Editor.js source -> Editor.js target: exercises the django-editor-js
         # adapter for both reading (summary source) and writing (summary target).
         "body_en": [
@@ -224,8 +214,6 @@ class NewsAdmin(ImportExportModelAdmin, TranslationAdmin):
         "tags": {
             "source_fields": [
                 "title",
-                "content",
-                "summary",
                 "body",
                 "body_summary",
                 "attachments_summary",
@@ -245,7 +233,7 @@ class NewsAdmin(ImportExportModelAdmin, TranslationAdmin):
         ),
         (
             "news/admin_content_include.html",
-            "content_en",
+            "body_en",
             "above",
         ),
         (
@@ -278,15 +266,6 @@ class NewsAdmin(ImportExportModelAdmin, TranslationAdmin):
             "top",
         ),
     ]
-
-    # baton_summarize_fields = {
-    #     "content_en": [{
-    #         "target": "summary",
-    #         "words": 140,
-    #         "useBulletedList": True,
-    #         "language": "en",
-    #     }],
-    # }
 
     # baton_vision_fields = {
     #     "image": [{
