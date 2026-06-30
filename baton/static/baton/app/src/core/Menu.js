@@ -295,7 +295,8 @@ const Menu = {
       return
     }
     // the raw form is replaced by the sidebar dropdown, it stays in the dom as submit target
-    form.hide()
+    // remove d-flex (display:flex !important) so the inline display:none from hide() wins
+    form.removeClass('d-flex').hide()
     const wrapper = $('<div />', { class: 'dropdown language-switcher' })
     const toggle = $('<a />', {
       class: 'language',
@@ -322,7 +323,7 @@ const Menu = {
   },
   removeUserTools: function () {
     // on mobile the sidebar dropdown is gone, restore the raw language form in the header
-    $('form[data-baton-language-switcher]').show()
+    $('form[data-baton-language-switcher]').addClass('d-flex').show()
     $('#user-tools-sidebar').remove()
   },
   fetchData: function () {
