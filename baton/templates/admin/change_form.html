@@ -3,6 +3,8 @@
 
 {% block content %}{{ block.super }}
 
+{% baton_ai_credentials_configured as baton_ai_ready %}
+
 {% for template, field, position in adminform.model_admin.baton_form_includes %}
     <template id="template-{{ field }}" data-position="{{ position }}">
         <div id='template-{{ field }}-container' class="baton-form-include baton-form-include-{{ position }}">
@@ -17,7 +19,7 @@
     </template>
 {% endif %}
 
-{% if adminform.model_admin.baton_summarize_fields %}
+{% if adminform.model_admin.baton_summarize_fields and baton_ai_ready %}
     {% for field, items in adminform.model_admin.baton_summarize_fields.items %}
         {% for item in items %}
             <script>
@@ -29,7 +31,7 @@
     {% endfor %}
 {% endif %}
 
-{% if adminform.model_admin.baton_vision_fields %}
+{% if adminform.model_admin.baton_vision_fields and baton_ai_ready %}
     {% for field, items in adminform.model_admin.baton_vision_fields.items %}
         {% for item in items %}
             <script>
@@ -41,7 +43,7 @@
     {% endfor %}
 {% endif %}
 
-{% if adminform.model_admin.baton_tag_suggestion_fields %}
+{% if adminform.model_admin.baton_tag_suggestion_fields and baton_ai_ready %}
     {% for field, item in adminform.model_admin.baton_tag_suggestion_fields.items %}
         <script>
             Baton.Dispatcher.register('onReady', function () {

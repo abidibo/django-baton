@@ -133,6 +133,17 @@ def baton_config_value(key):
     return get_config(key)
 
 
+@register.simple_tag
+def baton_ai_credentials_configured():
+    """Whether the Baton AI credentials are set.
+
+    The opt-in AI features (summarize, vision, tag suggestions) are wired in the
+    change form only when this is true, so their buttons do not show up when the
+    AI cannot be reached, consistently with translations and corrections.
+    """
+    return bool(get_config('BATON_CLIENT_ID') and get_config('BATON_CLIENT_SECRET'))
+
+
 @register.inclusion_tag('baton/theme.html')
 def baton_theme():
     try:
