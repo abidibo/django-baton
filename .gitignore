@@ -16,6 +16,7 @@ tags.temp
 django_baton.egg-info/
 .ropeproject
 .virtualenv
+.venv
 .agents
 .claude
 .codex
