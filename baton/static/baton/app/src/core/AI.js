@@ -258,6 +258,12 @@ const AI = {
     const targetId = target.attr('id')
     const chars = conf?.chars || 100
 
+    // do not overwrite an already filled target: mirror the translate behaviour,
+    // where fields that are already compiled are left untouched
+    if (self.fieldText(targetId) !== '') {
+      return
+    }
+
     // spinner
     const overlay = $('<div />', { class: 'spinner-overlay' }).appendTo(document.body)
     const spinner = $('<i />', { class: 'material-symbols-outlined icon-spin' }).text('progress_activity')
