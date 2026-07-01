@@ -4,4 +4,4 @@ from django.apps import AppConfig
 
 
 class BatonConfig(AppConfig):
-    name = 'baton'
+    name: str = 'baton'

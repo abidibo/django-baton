@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+from typing import Any, Iterable, Iterator, cast
+
 from django.contrib import admin
 from django.contrib.admin.filters import (
     SimpleListFilter,
@@ -6,19 +10,24 @@ from django.contrib.admin.filters import (
     RelatedFieldListFilter,
     RelatedOnlyFieldListFilter
 )
+from django.contrib.admin.views.main import ChangeList
+from django.db.models import QuerySet
+from django.http import HttpRequest
 from .models import BatonTheme
 
 
 class InputFilter(admin.SimpleListFilter):
     template = 'baton/filters/input_filter.html'
 
-    def lookups(self, request, model_admin):
+    def lookups(
+        self, request: HttpRequest, model_admin: admin.ModelAdmin[Any]
+    ) -> Iterable[tuple[str, str]] | None:
         # Dummy, required to show the filter.
         return (('all', 'All'),)
 
-    def choices(self, changelist):
+    def choices(self, changelist: ChangeList) -> Iterator[Any]:
         # Grab only the "all" option.
-        all_choice = next(super(InputFilter, self).choices(changelist))
+        all_choice = cast("dict[str, Any]", next(super(InputFilter, self).choices(changelist)))
         all_choice['query_parts'] = (
             (k, v)
             for k, v in changelist.get_filters_params().items()
@@ -50,7 +59,9 @@ class RelatedOnlyDropdownFilter(RelatedOnlyFieldListFilter):
 class MultipleChoiceListFilter(admin.SimpleListFilter):
     template = 'baton/filters/multiple_choice_filter.html'
 
-    def lookups(self, request, model_admin):
+    def lookups(
+        self, request: HttpRequest, model_admin: admin.ModelAdmin[Any]
+    ) -> Iterable[tuple[str, str]] | None:
         """
         Must be overridden to return a list of tuples (value, verbose value)
         """
@@ -59,18 +70,23 @@ class MultipleChoiceListFilter(admin.SimpleListFilter):
             'return a list of tuples (value, verbose value).'
         )
 
-    def queryset(self, request, queryset):
-        if request.GET.get(self.parameter_name):
-            kwargs = {self.parameter_name: request.GET[self.parameter_name].split(',')}
+    def queryset(self, request: HttpRequest, queryset: QuerySet[Any]) -> QuerySet[Any] | None:
+        param = cast(str, self.parameter_name)
+        if request.GET.get(param):
+            kwargs = {param: request.GET[param].split(',')}
             queryset = queryset.filter(**kwargs)
         return queryset
 
-    def value_as_list(self):
-        return self.value().split(',') if self.value() else []
+    def value_as_list(self) -> list[str]:
+        value = self.value()
+        return value.split(',') if value else []
 
-    def choices(self, changelist):
+    def choices(self, changelist: ChangeList) -> Iterator[Any]:
+        param = cast(str, self.parameter_name)
 
-        def amend_query_string(include=None, exclude=None):
+        def amend_query_string(
+            include: str | None = None, exclude: str | None = None
+        ) -> str:
             selections = self.value_as_list()
             if include and include not in selections:
                 selections.append(include)
@@ -78,20 +94,20 @@ class MultipleChoiceListFilter(admin.SimpleListFilter):
                 selections.remove(exclude)
             if selections:
                 csv = ','.join(selections)
-                return changelist.get_query_string({self.parameter_name: csv})
+                return changelist.get_query_string({param: csv})
             else:
-                return changelist.get_query_string(remove=[self.parameter_name])
+                return changelist.get_query_string(remove=[param])
 
         yield {
             'selected': self.value() is None,
-            'query_string': changelist.get_query_string(remove=[self.parameter_name]),
+            'query_string': changelist.get_query_string(remove=[param]),
             'display': 'All',
             'reset': True,
         }
         for lookup, title in self.lookup_choices:
             yield {
                 'selected': str(lookup) in self.value_as_list(),
-                'query_string': changelist.get_query_string({self.parameter_name: lookup}),
+                'query_string': changelist.get_query_string({param: lookup}),
                 'include_query_string': amend_query_string(include=str(lookup)),
                 'exclude_query_string': amend_query_string(exclude=str(lookup)),
                 'display': title,

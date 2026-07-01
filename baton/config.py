@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
+from __future__ import annotations
+
+from typing import Any, cast
+
 from django.conf import settings
-from django.utils.html import mark_safe
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
 
-default_config = {
+default_config: dict[str, Any] = {
     "SITE_TITLE": "Baton",
     "SITE_HEADER": '<img class="baton-logo-light" src="%sbaton/img/logo.png" /><img class="baton-logo-dark" src="%sbaton/img/logo_dark.png" />'
     % (settings.STATIC_URL, settings.STATIC_URL),
@@ -34,7 +38,7 @@ default_config = {
 }
 
 
-def get_config(key):
+def get_config(key: str) -> Any:
     safe = [
         "SITE_HEADER",
         "COPYRIGHT",
@@ -48,6 +52,7 @@ def get_config(key):
         value = user_settings.get(key, default_config.get(key, None))
 
     if key in safe:
-        return mark_safe(value)
+        # keys in `safe` always resolve to string values (see default_config)
+        return mark_safe(cast(str, value))
 
     return value

@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from django.forms.widgets import ClearableFileInput
 
 
 class BatonAiImageInput(ClearableFileInput):
-    template_name = "baton/widgets/ai_image.html"
+    template_name: str = "baton/widgets/ai_image.html"

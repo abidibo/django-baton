@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+
 class AIModels:
     BATON_GPT_3_5_TURBO = "gpt-3.5-turbo"
     BATON_GPT_4_TURBO = 'gpt-4-turbo'
@@ -6,17 +9,17 @@ class AIModels:
     BATON_GPT_5_4 = 'gpt-5.4'
     BATON_GPT_IMAGE_1_5 = 'gpt-image-1.5'
 
-    text_models = [
+    text_models: list[str] = [
         BATON_GPT_3_5_TURBO,
         BATON_GPT_4_TURBO,
         BATON_GPT_4O,
         BATON_GPT_4O_MINI,
         BATON_GPT_5_4,
     ]
-    image_models = [
+    image_models: list[str] = [
         BATON_GPT_IMAGE_1_5,
     ]
-    vision_models = [
+    vision_models: list[str] = [
         BATON_GPT_4O_MINI,
         BATON_GPT_5_4,
     ]

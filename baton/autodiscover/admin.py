@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+from typing import Any
+
 from django.contrib import admin
 
 from ..config import get_config
@@ -10,7 +14,7 @@ class BatonAdminSite(admin.AdminSite):
     index_template = 'admin/index.html'
     enable_nav_sidebar = False
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         """ Registers all apps with BatonAdminSite """
         super(BatonAdminSite, self).__init__(*args, **kwargs)
         # copy registered actions

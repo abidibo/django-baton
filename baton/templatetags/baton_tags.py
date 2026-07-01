@@ -1,12 +1,17 @@
+from __future__ import annotations
+
 import json
 import time
 import hmac
 import base64
 import hashlib
+from typing import Any
+
 import requests
 from decimal import Decimal
 from django.urls import reverse
 from django import template
+from django.template import Context
 from django.utils.html import escapejs
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
@@ -19,9 +24,10 @@ from ..ai import AIModels
 
 register = template.Library()
 
-def get_ai_models(ai_config):
-    if ai_config.get("MODELS"): # function hook
-        fn = import_string(ai_config.get("MODELS"))
+def get_ai_models(ai_config: dict[str, Any]) -> dict[str, Any]:
+    models_hook = ai_config.get("MODELS")
+    if models_hook: # function hook
+        fn = import_string(models_hook)
         models = fn()
         translations_model = models.get('TRANSLATIONS_MODEL', AIModels.BATON_GPT_4O_MINI)
         summarizations_model = models.get('SUMMARIZATIONS_MODEL', AIModels.BATON_GPT_4O_MINI)
@@ -47,11 +53,11 @@ def get_ai_models(ai_config):
     }
 
 @register.simple_tag
-def baton_config():
+def baton_config() -> dict[str, Any]:
     # retrieve the default language
     default_language = None
     try:
-        default_language = settings.MODELTRANSLATION_DEFAULT_LANGUAGE
+        default_language = getattr(settings, "MODELTRANSLATION_DEFAULT_LANGUAGE")
     except AttributeError:
         default_language = settings.LANGUAGES[0][0]
     except:
@@ -129,12 +135,12 @@ def baton_config():
 
 
 @register.simple_tag
-def baton_config_value(key):
+def baton_config_value(key: str) -> Any:
     return get_config(key)
 
 
 @register.simple_tag
-def baton_ai_credentials_configured():
+def baton_ai_credentials_configured() -> bool:
     """Whether the Baton AI credentials are set.
 
     The opt-in AI features (summarize, vision, tag suggestions) are wired in the
@@ -145,7 +151,7 @@ def baton_ai_credentials_configured():
 
 
 @register.inclusion_tag('baton/theme.html')
-def baton_theme():
+def baton_theme() -> dict[str, Any]:
     try:
         theme = BatonTheme.objects.get(active=True)
     except:
@@ -155,7 +161,7 @@ def baton_theme():
     }
 
 @register.inclusion_tag('baton/footer.html', takes_context=True)
-def footer(context):
+def footer(context: Context) -> dict[str, Any]:
     user = context['user']
     return {
         'user': user,
@@ -170,7 +176,7 @@ def footer(context):
 
 
 @register.simple_tag(takes_context=True)
-def call_model_admin_method(context, **kwargs):
+def call_model_admin_method(context: Context, **kwargs: Any) -> Any:
     try:
         model_admin = kwargs.pop('model_admin')
         method = kwargs.pop('method')
@@ -180,27 +186,18 @@ def call_model_admin_method(context, **kwargs):
 
 
 @register.filter
-def to_json(python_dict):
+def to_json(python_dict: Any) -> str:
     return json.dumps(python_dict)
 
 
 @register.inclusion_tag('baton/ai_stats.html', takes_context=True)
-def baton_ai_stats(context):
+def baton_ai_stats(context: Context) -> dict[str, Any]:
     user = context['user']
 
-    # The API endpoint to communicate with
-    url_post = "https://baton.sqrt64.it/api/v1/stats/"
-    # url_post = "http://localhost:1323/api/v1/stats/"
-
-    # A GET request to the API
-    ts = str(int(time.time()))
-    h = hmac.new(settings.BATON.get('BATON_CLIENT_SECRET').encode('utf-8'), ts.encode('utf-8'), hashlib.sha256)
-    sig = base64.b64encode(h.digest()).decode()
-
     error = False
-    errorMessage = None
+    errorMessage: str | None = None
     status_code = 200
-    budget = 0
+    budget: Decimal | int = 0
     translations = {}
     summarizations = {}
     corrections = {}
@@ -208,33 +205,53 @@ def baton_ai_stats(context):
     images = {}
     response_json = {}
 
-    try:
-        response = requests.get(url_post, headers={
-            'X-Client-Id': settings.BATON.get('BATON_CLIENT_ID'),
-            'X-Timestamp': ts,
-            'X-Signature': sig,
-        })
+    # Credentials may be unset (BATON absent, or client id/secret missing). In
+    # that case degrade gracefully into the same error path the template already
+    # renders, instead of crashing, consistently with get_baton_ai_headers.
+    baton_settings = getattr(settings, "BATON", None) or {}
+    client_id = baton_settings.get('BATON_CLIENT_ID')
+    client_secret = baton_settings.get('BATON_CLIENT_SECRET')
 
-        status_code = response.status_code
-        if status_code != 200:
-            error = True
-            try:
-                errorMessage = response.json().get('message', None)
-            except Exception as e:
-                errorMessage = str(e)
-        else:
-            response_json = response.json()
-            budget = round(Decimal(response_json.get('budget', 0.0)), 2)
-            translations = response_json.get('translations', {})
-            summarizations = response_json.get('summarizations', {})
-            vision = response_json.get('vision', {})
-            corrections = response_json.get('corrections', {})
-            images = response_json.get('images', {})
-    except Exception as e:
-        errorMessage = str(e)
+    if not client_id or not client_secret:
         error = True
+        errorMessage = "Missing BATON_CLIENT_ID or BATON_CLIENT_SECRET settings."
+    else:
+        # The API endpoint to communicate with
+        url_post = "https://baton.sqrt64.it/api/v1/stats/"
+        # url_post = "http://localhost:1323/api/v1/stats/"
 
-    ai_config = get_config('AI')
+        # A GET request to the API
+        ts = str(int(time.time()))
+        h = hmac.new(client_secret.encode('utf-8'), ts.encode('utf-8'), hashlib.sha256)
+        sig = base64.b64encode(h.digest()).decode()
+
+        try:
+            response = requests.get(url_post, headers={
+                'X-Client-Id': client_id,
+                'X-Timestamp': ts,
+                'X-Signature': sig,
+            })
+
+            status_code = response.status_code
+            if status_code != 200:
+                error = True
+                try:
+                    errorMessage = response.json().get('message', None)
+                except Exception as e:
+                    errorMessage = str(e)
+            else:
+                response_json = response.json()
+                budget = round(Decimal(response_json.get('budget', 0.0)), 2)
+                translations = response_json.get('translations', {})
+                summarizations = response_json.get('summarizations', {})
+                vision = response_json.get('vision', {})
+                corrections = response_json.get('corrections', {})
+                images = response_json.get('images', {})
+        except Exception as e:
+            errorMessage = str(e)
+            error = True
+
+    ai_config = get_config('AI') or {}
     ai_models = get_ai_models(ai_config)
 
     return {

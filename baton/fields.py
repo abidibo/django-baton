@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+from typing import Any, Sequence
+
 from django.db import models
 
 from django.db.models.fields.files import ImageFieldFile
@@ -9,8 +13,10 @@ from .forms import BatonAiImageFormField
 from .widgets import BatonAiImageInput
 
 class BatonAiImageFieldFile(ImageFieldFile):
+    field: BatonAiImageField
+
     @property
-    def subject_perc_position(self):
+    def subject_perc_position(self) -> dict[str, int] | None:
         if self.field.subject_location_field and getattr(
                 self.instance, self.field.subject_location_field):
             (cX, cY) = getattr(self.instance,
@@ -23,7 +29,7 @@ class BatonAiImageFieldFile(ImageFieldFile):
         return None
 
     @property
-    def subject_position(self):
+    def subject_position(self) -> dict[str, int] | None:
         perc = self.subject_perc_position
         if perc:
             return {
@@ -33,7 +39,7 @@ class BatonAiImageFieldFile(ImageFieldFile):
         return None
 
     @property
-    def sorl(self):
+    def sorl(self) -> str:
         """ shortcut property to use with sorl-thumbnmail crop featur e"""
         position = self.subject_perc_position
         if position:
@@ -47,15 +53,15 @@ class BatonAiImageField(models.ImageField):
     attr_class = BatonAiImageFieldFile
 
     def __init__(self,
-                 verbose_name=None,
-                 name=None,
-                 width_field=None,
-                 height_field=None,
-                 subject_location_field=None,
-                 alt_field=None,
-                 alt_chars=20,
-                 alt_language=get_language(),
-                 **kwargs):
+                 verbose_name: str | None = None,
+                 name: str | None = None,
+                 width_field: str | None = None,
+                 height_field: str | None = None,
+                 subject_location_field: str | None = None,
+                 alt_field: str | None = None,
+                 alt_chars: int = 20,
+                 alt_language: str | None = get_language(),
+                 **kwargs: Any) -> None:
         self.width_field, self.height_field = width_field, height_field
         self.subject_location_field = subject_location_field
         self.alt_field = alt_field
@@ -63,7 +69,7 @@ class BatonAiImageField(models.ImageField):
         self.alt_language = alt_language
         super().__init__(verbose_name, name, **kwargs)
 
-    def deconstruct(self):
+    def deconstruct(self) -> tuple[str, str, Sequence[Any], dict[str, Any]]:
         name, path, args, kwargs = super().deconstruct()
         if self.alt_field:
             kwargs['alt_field'] = self.alt_field
@@ -73,7 +79,8 @@ class BatonAiImageField(models.ImageField):
             kwargs['subject_location_field'] = self.subject_location_field
         return name, path, args, kwargs
 
-    def formfield(self, **kwargs):
+    def formfield(self, **kwargs: Any) -> Any:  # type: ignore[override]
+        # intentionally simplified: the widget and form_class are always forced
         d = kwargs
         # override widget
         d.update({

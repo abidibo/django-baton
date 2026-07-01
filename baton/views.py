@@ -1,13 +1,19 @@
 # -*- coding: utf-8 -*-
+from __future__ import annotations
+
 import hashlib
 import json
 import hmac
 import base64
 import time
+from typing import Any
+
 import requests
-from django.http import JsonResponse
+from django.db.models import Model, QuerySet
+from django.http import HttpRequest, JsonResponse
+from django.http.response import HttpResponseBase
 from django.apps import apps
-from django.contrib.admin import site
+from django.contrib.admin import ModelAdmin, site
 from django.contrib.admin.views.decorators import staff_member_required
 from django.utils.decorators import method_decorator
 from django.core.exceptions import FieldDoesNotExist, ImproperlyConfigured
@@ -19,15 +25,16 @@ from django.utils.text import slugify
 
 from .config import get_config
 
-BATON_AI_API_BASE_PATH = settings.BATON.get(
+BATON_AI_API_BASE_PATH = (getattr(settings, "BATON", None) or {}).get(
     "BATON_AI_API_BASE_PATH", "https://baton.sqrt64.it/api/v1"
 )
 # BATON_AI_API_BASE_PATH = 'http://localhost:1323/api/v1'
 
 
-def get_baton_ai_headers():
-    client_id = settings.BATON.get("BATON_CLIENT_ID")
-    client_secret = settings.BATON.get("BATON_CLIENT_SECRET")
+def get_baton_ai_headers() -> tuple[dict[str, str] | None, JsonResponse | None]:
+    baton_settings = getattr(settings, "BATON", None) or {}
+    client_id = baton_settings.get("BATON_CLIENT_ID")
+    client_secret = baton_settings.get("BATON_CLIENT_SECRET")
     if not client_id or not client_secret:
         return None, JsonResponse(
             {
@@ -55,11 +62,11 @@ def get_baton_ai_headers():
 
 class GetAppListJsonView(View):
     @method_decorator(staff_member_required)
-    def dispatch(self, *args, **kwargs):
+    def dispatch(self, *args: Any, **kwargs: Any) -> HttpResponseBase:
         """Only staff members can access this view"""
         return super(GetAppListJsonView, self).dispatch(*args, **kwargs)
 
-    def get(self, request):
+    def get(self, request: HttpRequest) -> JsonResponse:
         """Returns a json representing the menu voices
         in a format eaten by the js menu.
         Raised ImproperlyConfigured exceptions can be viewed
@@ -78,10 +85,10 @@ class GetAppListJsonView(View):
 
         return JsonResponse(voices, safe=False)
 
-    def get_menu(self, request):
+    def get_menu(self, request: HttpRequest) -> Any:
         return get_config("MENU")
 
-    def add_voice(self, voices, item):
+    def add_voice(self, voices: list[dict[str, Any]], item: dict[str, Any]) -> None:
         """Adds a voice to the list"""
         voice = None
         if item.get("type") == "title":
@@ -95,7 +102,7 @@ class GetAppListJsonView(View):
         if voice:
             voices.append(voice)
 
-    def get_title_voice(self, item):
+    def get_title_voice(self, item: dict[str, Any]) -> dict[str, Any] | None:
         """Title voice
         Returns the js menu compatible voice dict if the user
         can see it, None otherwise
@@ -107,7 +114,7 @@ class GetAppListJsonView(View):
             view = self.check_apps_permission(item.get("apps", []))
         if view:
             children_items = item.get("children", [])
-            children = []
+            children: list[dict[str, Any]] = []
             if len(children_items):
                 for citem in children_items:
                     self.add_voice(children, citem)
@@ -121,7 +128,7 @@ class GetAppListJsonView(View):
             }
         return None
 
-    def get_free_voice(self, item):
+    def get_free_voice(self, item: dict[str, Any]) -> dict[str, Any] | None:
         """Free voice
         Returns the js menu compatible voice dict if the user
         can see it, None otherwise
@@ -134,7 +141,7 @@ class GetAppListJsonView(View):
 
         if view:
             children_items = item.get("children", [])
-            children = []
+            children: list[dict[str, Any]] = []
             if len(children_items):
                 for citem in children_items:
                     self.add_voice(children, citem)
@@ -149,17 +156,18 @@ class GetAppListJsonView(View):
             }
         return None
 
-    def get_app_voice(self, item):
+    def get_app_voice(self, item: dict[str, Any]) -> dict[str, Any] | None:
         """App voice
         Returns the js menu compatible voice dict if the user
         can see it, None otherwise
         """
-        if item.get("name", None) is None:
+        app_name = item.get("name")
+        if app_name is None:
             raise ImproperlyConfigured("App menu voices must have a name key")
-        if self.check_apps_permission([item.get("name", None)]):
-            children = []
+        if self.check_apps_permission([app_name]):
+            children: list[dict[str, Any]] = []
             if item.get("models", None) is None:
-                for name, model in self.apps_dict[item.get("name")]["models"].items():  # noqa
+                for name, model in self.apps_dict[app_name]["models"].items():  # noqa
                     children.append(
                         {
                             "type": "model",
@@ -169,7 +177,7 @@ class GetAppListJsonView(View):
                     )
             else:
                 for model_item in item.get("models", []):
-                    voice = self.get_model_voice(item.get("name"), model_item)
+                    voice = self.get_model_voice(app_name, model_item)
                     if voice:
                         children.append(voice)
 
@@ -182,7 +190,7 @@ class GetAppListJsonView(View):
             }
         return None
 
-    def get_app_model_voice(self, app_model_item):
+    def get_app_model_voice(self, app_model_item: dict[str, Any]) -> dict[str, Any] | None:
         """App Model voice
         Returns the js menu compatible voice dict if the user
         can see it, None otherwise
@@ -190,32 +198,34 @@ class GetAppListJsonView(View):
         if app_model_item.get("name", None) is None:
             raise ImproperlyConfigured("Model menu voices must have a name key")  # noqa
 
-        if app_model_item.get("app", None) is None:
+        app = app_model_item.get("app")
+        if app is None:
             raise ImproperlyConfigured("Model menu voices must have an app key")  # noqa
 
-        return self.get_model_voice(app_model_item.get("app"), app_model_item)
+        return self.get_model_voice(app, app_model_item)
 
-    def get_model_voice(self, app, model_item):
+    def get_model_voice(self, app: str, model_item: dict[str, Any]) -> dict[str, Any] | None:
         """Model voice
         Returns the js menu compatible voice dict if the user
         can see it, None otherwise
         """
-        if model_item.get("name", None) is None:
+        name = model_item.get("name")
+        if name is None:
             raise ImproperlyConfigured("Model menu voices must have a name key")  # noqa
 
-        if self.check_model_permission(app, model_item.get("name", None)):
+        if self.check_model_permission(app, name):
             return {
                 "type": "model",
                 "label": model_item.get("label", ""),
                 "icon": model_item.get("icon", None),
-                "url": self.apps_dict[app]["models"][model_item.get("name")][
+                "url": self.apps_dict[app]["models"][name][
                     "admin_url"
                 ],  # noqa
             }
 
         return None
 
-    def create_app_list_dict(self):
+    def create_app_list_dict(self) -> dict[str, Any]:
         """Creates a more efficient to check dictionary from
         the app_list list obtained from django admin
         """
@@ -231,13 +241,13 @@ class GetAppListJsonView(View):
             }
         return d
 
-    def check_user_permission(self, perms):
+    def check_user_permission(self, perms: list[str]) -> bool:
         for perm in perms:
             if self.request.user.has_perm(perm):
                 return True
         return False
 
-    def check_apps_permission(self, apps):
+    def check_apps_permission(self, apps: list[str]) -> bool:
         """Checks if one of apps is listed in apps_dict
         Since apps_dict is derived from the app_list
         given by django admin, it lists only the apps
@@ -249,7 +259,7 @@ class GetAppListJsonView(View):
 
         return False
 
-    def check_model_permission(self, app, model):
+    def check_model_permission(self, app: str, model: str) -> bool:
         """Checks if model is listed in apps_dict
         Since apps_dict is derived from the app_list
         given by django admin, it lists only the apps
@@ -260,7 +270,7 @@ class GetAppListJsonView(View):
 
         return False
 
-    def get_default_voices(self):
+    def get_default_voices(self) -> list[dict[str, Any]]:
         """When no custom menu is defined in settings
         Retrieves a js menu ready dict from the django admin app list
         """
@@ -286,7 +296,7 @@ class GetAppListJsonView(View):
 
 
 class GetGravatartUrlJsonView(View):
-    def get(self, request):
+    def get(self, request: HttpRequest) -> JsonResponse:
         if not request.user.is_authenticated:
             return JsonResponse({})
         try:
@@ -299,11 +309,11 @@ class GetGravatartUrlJsonView(View):
 
 class TranslateView(View):
     @method_decorator(staff_member_required)
-    def dispatch(self, *args, **kwargs):
+    def dispatch(self, *args: Any, **kwargs: Any) -> HttpResponseBase:
         """Only staff members can access this view"""
         return super(TranslateView, self).dispatch(*args, **kwargs)
 
-    def post(self, request):
+    def post(self, request: HttpRequest) -> JsonResponse:
         body = json.loads(request.body)
         payload = {"items": [], "model": body.get("model")}
         for field in body.get("items"):
@@ -340,7 +350,7 @@ class TranslateView(View):
 
 
 class SummarizeView(View):
-    def post(self, request):
+    def post(self, request: HttpRequest) -> JsonResponse:
         data = json.loads(request.body)
         payload = {
             "id": data.get("id"),
@@ -376,7 +386,7 @@ class SummarizeView(View):
 
 
 class VisionView(View):
-    def post(self, request):
+    def post(self, request: HttpRequest) -> JsonResponse:
         data = json.loads(request.body)
         payload = {
             "id": data.get("id"),
@@ -410,7 +420,7 @@ class VisionView(View):
 
 
 class GenerateImageView(View):
-    def post(self, request):
+    def post(self, request: HttpRequest) -> JsonResponse:
         data = json.loads(request.body)
         payload = {
             "id": data.get("id"),
@@ -443,7 +453,7 @@ class GenerateImageView(View):
 
 
 class CorrectView(View):
-    def post(self, request):
+    def post(self, request: HttpRequest) -> JsonResponse:
         data = json.loads(request.body)
         payload = {
             "id": data.get("id"),
@@ -477,11 +487,11 @@ class CorrectView(View):
 
 class SuggestTagsView(View):
     @method_decorator(staff_member_required)
-    def dispatch(self, *args, **kwargs):
+    def dispatch(self, *args: Any, **kwargs: Any) -> HttpResponseBase:
         """Only staff members can access this view"""
         return super(SuggestTagsView, self).dispatch(*args, **kwargs)
 
-    def post(self, request):
+    def post(self, request: HttpRequest) -> JsonResponse:
         data = json.loads(request.body)
         app_label = data.get("appLabel")
         model_name = data.get("modelName")
@@ -495,6 +505,7 @@ class SuggestTagsView(View):
         )
         if error_response:
             return error_response
+        assert model_admin is not None
 
         field_config = getattr(model_admin, "baton_tag_suggestion_fields").get(
             field_name,
@@ -580,7 +591,9 @@ class SuggestTagsView(View):
             status=post_response.status_code,
         )
 
-    def get_model_admin(self, request, app_label, model_name, field_name):
+    def get_model_admin(
+        self, request: HttpRequest, app_label: str, model_name: str, field_name: str
+    ) -> tuple[ModelAdmin[Any] | None, JsonResponse | None]:
         try:
             model = apps.get_model(app_label, model_name)
         except (LookupError, ValueError):
@@ -619,7 +632,14 @@ class SuggestTagsView(View):
 
         return model_admin, None
 
-    def get_existing_tags(self, model, field_name, label_field, language, limit):
+    def get_existing_tags(
+        self,
+        model: type[Model],
+        field_name: str,
+        label_field: str | None,
+        language: str,
+        limit: int,
+    ) -> list[dict[str, Any]]:
         try:
             field = model._meta.get_field(field_name)
         except FieldDoesNotExist:
@@ -631,6 +651,7 @@ class SuggestTagsView(View):
                 "baton_tag_suggestion_fields supports ManyToManyField fields."
             )
 
+        assert field.remote_field is not None
         related_model = field.remote_field.model
         label_field = label_field or self.get_default_label_field(related_model)
         tags = []
@@ -645,14 +666,14 @@ class SuggestTagsView(View):
             )
         return tags
 
-    def get_default_label_field(self, model):
+    def get_default_label_field(self, model: type[Model]) -> str | None:
         field_names = [field.name for field in model._meta.fields]
         for candidate in ("name", "title", "label", "slug"):
             if candidate in field_names:
                 return candidate
         return None
 
-    def get_label_values(self, item, label_field, language):
+    def get_label_values(self, item: Model, label_field: str | None, language: str) -> list[str]:
         if not label_field:
             return [force_str(item)]
 
@@ -678,32 +699,32 @@ class SuggestTagsView(View):
         labels.append(force_str(item))
         return list(dict.fromkeys(labels))
 
-    def get_default_language(self):
+    def get_default_language(self) -> str:
         try:
-            return settings.MODELTRANSLATION_DEFAULT_LANGUAGE
+            return getattr(settings, "MODELTRANSLATION_DEFAULT_LANGUAGE")
         except AttributeError:
             return settings.LANGUAGES[0][0]
 
     def normalize_ai_response(
         self,
-        data,
-        existing_by_id,
-        existing_by_label,
-        selected,
-        allow_new,
-        max_suggestions,
-        preselect_min_confidence=0.8,
-    ):
+        data: dict[str, Any],
+        existing_by_id: dict[str, Any],
+        existing_by_label: dict[str, Any],
+        selected: list[str],
+        allow_new: bool,
+        max_suggestions: int,
+        preselect_min_confidence: float = 0.8,
+    ) -> dict[str, Any]:
         suggestions = data.get("data", data)
         existing_items = suggestions.get("existing", suggestions.get("existingTags", []))
         new_items = suggestions.get("new", suggestions.get("newTags", []))
-        selected = set(selected)
+        selected_set = set(selected)
 
         existing = []
         seen_existing = set()
         for item in existing_items:
             tag = self.get_existing_tag(item, existing_by_id, existing_by_label)
-            if not tag or tag["id"] in selected or tag["id"] in seen_existing:
+            if not tag or tag["id"] in selected_set or tag["id"] in seen_existing:
                 continue
             confidence = self.get_confidence(item)
             existing.append(
@@ -758,7 +779,9 @@ class SuggestTagsView(View):
             "new": new,
         }
 
-    def get_existing_tag(self, item, existing_by_id, existing_by_label):
+    def get_existing_tag(
+        self, item: Any, existing_by_id: dict[str, Any], existing_by_label: dict[str, Any]
+    ) -> dict[str, Any] | None:
         if isinstance(item, dict):
             item_id = item.get("id") or item.get("pk") or item.get("value")
             label = item.get("label") or item.get("name")
@@ -775,17 +798,17 @@ class SuggestTagsView(View):
 
         return None
 
-    def get_label(self, item):
+    def get_label(self, item: Any) -> str:
         if isinstance(item, dict):
             return item.get("label") or item.get("name") or ""
         return force_str(item)
 
-    def get_confidence(self, item):
+    def get_confidence(self, item: Any) -> Any:
         if isinstance(item, dict):
             return item.get("confidence") or item.get("score")
         return None
 
-    def is_preselected(self, confidence, threshold):
+    def is_preselected(self, confidence: Any, threshold: Any) -> bool:
         # When the AI returns no confidence, keep the previous behaviour and
         # preselect the tag.
         if confidence is None:
@@ -795,17 +818,17 @@ class SuggestTagsView(View):
         except (TypeError, ValueError):
             return True
 
-    def normalize_label(self, label):
+    def normalize_label(self, label: Any) -> str:
         return slugify(force_str(label or "")).lower()
 
 
 class CreateTagsView(SuggestTagsView):
     @method_decorator(staff_member_required)
-    def dispatch(self, *args, **kwargs):
+    def dispatch(self, *args: Any, **kwargs: Any) -> HttpResponseBase:
         """Only staff members can access this view"""
         return super(CreateTagsView, self).dispatch(*args, **kwargs)
 
-    def post(self, request):
+    def post(self, request: HttpRequest) -> JsonResponse:
         data = json.loads(request.body)
         app_label = data.get("appLabel")
         model_name = data.get("modelName")
@@ -819,6 +842,7 @@ class CreateTagsView(SuggestTagsView):
         )
         if error_response:
             return error_response
+        assert model_admin is not None
 
         field_config = getattr(model_admin, "baton_tag_suggestion_fields").get(
             field_name,
@@ -939,7 +963,7 @@ class CreateTagsView(SuggestTagsView):
             {"data": {"tags": tags}, "success": True},
         )
 
-    def has_related_add_permission(self, request, related_model):
+    def has_related_add_permission(self, request: HttpRequest, related_model: type[Model]) -> bool:
         related_admin = site._registry.get(related_model)
         if related_admin:
             return related_admin.has_add_permission(request)
@@ -947,7 +971,7 @@ class CreateTagsView(SuggestTagsView):
         opts = related_model._meta
         return request.user.has_perm("%s.add_%s" % (opts.app_label, opts.model_name))
 
-    def set_tag_label(self, item, label_field, label):
+    def set_tag_label(self, item: Model, label_field: str, label: str) -> None:
         field_names = [field.name for field in item._meta.fields]
         # Base column (kept in sync with the default language by modeltranslation)
         if label_field in field_names:
