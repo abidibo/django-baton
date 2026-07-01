@@ -25,8 +25,38 @@ jobs:
         pip install -e .
         pip install Django
         pip install -r testapp/requirements.txt
-    # NOTE: only the non-e2e tests run here. The Selenium e2e suite (test_e2e_*)
-    # is being migrated to Playwright and is intentionally not run in CI yet.
+    # Fast feedback across Python/Django versions. The heavier Playwright e2e
+    # suite runs in the separate `e2e` job below.
     - name: Run tests (non-e2e)
       working-directory: testapp/app
       run: python manage.py test app.tests.test_config app.tests.test_views app.tests.test_urls
+
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v5
+    - name: Set up Python
+      uses: actions/setup-python@v6
+      with:
+        python-version: '3.12'
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e .
+        pip install Django
+        pip install -r testapp/requirements.txt -r testapp/requirements-e2e.txt
+    - name: Install Playwright browser
+      run: python -m playwright install --with-deps chromium
+    - name: Run e2e tests (Playwright)
+      working-directory: testapp/app
+      run: >-
+        python manage.py test
+        app.tests.test_e2e_login
+        app.tests.test_e2e_index
+        app.tests.test_e2e_index_mobile
+        app.tests.test_e2e_theme
+        app.tests.test_e2e_menu
+        app.tests.test_e2e_menu_mobile
+        app.tests.test_e2e_tabs
+        app.tests.test_e2e_input_filter
+        app.tests.test_e2e_cl_includes
