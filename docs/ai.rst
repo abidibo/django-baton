@@ -104,7 +104,9 @@ You can optionally specify the following parameters:
 - ``max_suggestions``: maximum number of suggestions, default is 8
 - ``allow_new``: if new tag labels can be suggested, default is ``True``
 - ``existing_limit``: maximum number of existing tags sent as candidates, default is 300
-- ``preselect_min_confidence``: existing tag suggestions are always shown, but only those whose AI confidence is at least this value are preselected (checked) in the confirmation modal, default is ``0.8``. This avoids auto-selecting weakly related existing tags that the AI sometimes forces; new tag candidates are not affected.
+- ``preselect_min_confidence``: tag suggestions are always shown, but only those whose AI confidence is at least this value are preselected (checked) in the confirmation modal, default is ``0.8``. This avoids auto-selecting weakly related tags that the AI sometimes forces; it applies to both existing tags and new tag candidates.
+
+Every suggestion in the confirmation modal also displays a colored badge with its AI confidence percentage: green for high confidence (``>= 80%``), yellow for medium (``50%`` to ``79%``) and red for low (``< 50%``).
 
 Tag suggestions and new tags always use the project default language (``MODELTRANSLATION_DEFAULT_LANGUAGE``, or the first of ``LANGUAGES``). The language is not configurable per field. New tags are created with the default language label, which is also copied into every other language field so the tag is usable everywhere out of the box; the other languages can be edited or translated manually afterwards.
 
