@@ -1,0 +1,24 @@
+# Third-party runtime dependencies of the demo/test project (testapp).
+#
+# NOT listed here on purpose:
+# - Django: provided by the CI matrix / your local environment, so its version
+#   can vary independently.
+# - django-baton: it is the library under test, installed from the repo root
+#   with `pip install -e .`.
+# - selenium / webdriver-manager: the e2e suite is being migrated off Selenium
+#   (Playwright rewrite tracked separately) and is not run in CI for now.
+packaging
+python-dotenv
+django-tinymce
+dj-editor-js==0.2.0
+django-admin-rangefilter
+django-admin-autocomplete-filter==0.6.1
+django-import-export
+django-select2
+docutils
+easy_thumbnails
+django-mptt
+django-modeltranslation
+reportlab
+requests
+svglib

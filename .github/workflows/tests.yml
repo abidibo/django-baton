@@ -1,0 +1,32 @@
+name: Tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # Each Python version resolves the newest compatible Django, so this
+        # also spans Django 5.x (3.10/3.11) and 6.x (3.12) for free.
+        python-version: ['3.10', '3.11', '3.12']
+    steps:
+    - uses: actions/checkout@v5
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v6
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e .
+        pip install Django
+        pip install -r testapp/requirements.txt
+    # NOTE: only the non-e2e tests run here. The Selenium e2e suite (test_e2e_*)
+    # is being migrated to Playwright and is intentionally not run in CI yet.
+    - name: Run tests (non-e2e)
+      working-directory: testapp/app
+      run: python manage.py test app.tests.test_config app.tests.test_views app.tests.test_urls
