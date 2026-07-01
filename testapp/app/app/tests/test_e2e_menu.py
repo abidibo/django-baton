@@ -1,141 +1,105 @@
-import time
-from django.test import TestCase
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
+from playwright.sync_api import expect
 
-from .utils import element_has_css_class, make_driver
-
-import os
-
-os.environ["WDM_LOG_LEVEL"] = "0"
+from .utils import PlaywrightTestCase
 
 
-class TestBatonMenu(TestCase):
+class TestBatonMenu(PlaywrightTestCase):
     def setUp(self):
-        self.driver = make_driver()
-        self.driver.set_window_size(1920, 1080)
-        self.driver.implicitly_wait(10)
+        super().setUp()
         self.login()
-        time.sleep(2)
-
-    def tearDown(self):
-        self.driver.quit()
-
-    def login(self):
-        self.driver.get("http://localhost:8000/admin")
-        username_field = self.driver.find_element(By.ID, "id_username")
-        password_field = self.driver.find_element(By.ID, "id_password")
-        button = self.driver.find_element(By.CSS_SELECTOR, "input[type=submit]")
-
-        username_field.send_keys("admin")
-        time.sleep(1)
-        password_field.send_keys("admin")
-        time.sleep(1)
-        button.click()
+        self.wait_baton_ready()
 
     def test_menu(self):
-        # Wait until baton is ready
-        wait = WebDriverWait(self.driver, 10)
-        wait.until(element_has_css_class((By.TAG_NAME, "body"), "baton-ready"))
-        time.sleep(2)
-        navbar = self.driver.find_element(By.CLASS_NAME, "sidebar-menu")
-        self.assertEqual(navbar.is_displayed(), True)
-        root_voices = navbar.find_elements(By.CSS_SELECTOR, ".depth-0 > li")
+        page = self.page
 
-        gravatart_icon = self.driver.find_element(By.CLASS_NAME, "gravatar-icon")
-        self.assertEqual(gravatart_icon.is_displayed(), True)
+        navbar = page.locator(".sidebar-menu")
+        expect(navbar).to_be_visible()
+        root_voices = page.locator(".depth-0 > li")
 
-        view_site_link = self.driver.find_element(By.CLASS_NAME, "view-site")
-        self.assertEqual(view_site_link.is_displayed(), True)
-
-        change_password_link = self.driver.find_element(By.CLASS_NAME, "password")
-        self.assertEqual(change_password_link.is_displayed(), True)
-
-        logout_link = self.driver.find_element(By.CLASS_NAME, "logout")
-        self.assertEqual(logout_link.is_displayed(), True)
+        expect(page.locator(".gravatar-icon").first).to_be_visible()
+        expect(page.locator(".view-site").first).to_be_visible()
+        expect(page.locator(".password").first).to_be_visible()
+        expect(page.locator(".logout").first).to_be_visible()
 
         # system title voice
-        self.assertEqual(root_voices[0].get_attribute("innerText"), "lock\nSYSTEM")
-        self.assertEqual("title" in root_voices[0].get_attribute("class").split(), True)
-        self.assertEqual(len(root_voices), 4)
+        expect(root_voices).to_have_count(4)
+        self.assertEqual(root_voices.nth(0).inner_text(), "lock\nSYSTEM")
+        self.assertIn("title", root_voices.nth(0).get_attribute("class").split())
 
         # authentication app voice
-        self.assertEqual("app" in root_voices[1].get_attribute("class").split(), True)
-        self.assertEqual(
-            root_voices[1]
-            .find_element(By.XPATH, ".//*[text()='Authentication']")
-            .is_displayed(),
-            True,
+        self.assertIn("app", root_voices.nth(1).get_attribute("class").split())
+        has_children = root_voices.nth(1).locator(".has-children")
+        expect(has_children).to_be_visible()
+        self.assertEqual(has_children.inner_text(), "Authentication")
+
+        # exclude the "back" item baton injects into the submenu on open, so
+        # positional indexing stays stable (Playwright locators are lazy and
+        # re-query the DOM, unlike Selenium's static element lists)
+        auth_children = root_voices.nth(1).locator(".depth-1 li:not(.nav-back)")
+        expect(auth_children).to_have_count(2)
+        self.assertFalse(auth_children.nth(0).is_visible())
+        self.assertTrue(
+            auth_children.nth(0)
+            .locator("a")
+            .get_attribute("href")
+            .endswith("/en/admin/auth/user/")
         )
-        self.assertEqual(
-            root_voices[1]
-            .find_element(By.CLASS_NAME, "has-children")
-            .get_attribute("innerText"),
-            "Authentication",
-        )
-        auth_children = root_voices[1].find_elements(By.CSS_SELECTOR, ".depth-1 li")
-        self.assertEqual(len(auth_children), 2)
-        self.assertEqual(auth_children[0].is_displayed(), False)
-        self.assertEqual(
-            auth_children[0].find_element(By.TAG_NAME, "a").get_attribute("href"),
-            "http://localhost:8000/en/admin/auth/user/",
-        )
-        self.assertEqual(auth_children[1].is_displayed(), False)
-        self.assertEqual(
-            auth_children[1].find_element(By.TAG_NAME, "a").get_attribute("href"),
-            "http://localhost:8000/en/admin/auth/group/",
-        )
-        # open submenu on click
-        root_voices[1].click()
-        self.assertEqual(auth_children[0].is_displayed(), True)
-        self.assertEqual(
-            auth_children[0].find_element(By.TAG_NAME, "a").get_attribute("innerText"),
-            "Users",
-        )
-        self.assertEqual(auth_children[1].is_displayed(), True)
-        self.assertEqual(
-            auth_children[1].find_element(By.TAG_NAME, "a").get_attribute("innerText"),
-            "Groups",
+        self.assertFalse(auth_children.nth(1).is_visible())
+        self.assertTrue(
+            auth_children.nth(1)
+            .locator("a")
+            .get_attribute("href")
+            .endswith("/en/admin/auth/group/")
         )
 
-        # news menu title volice
+        # open submenu on click
+        root_voices.nth(1).click()
+        expect(auth_children.nth(0)).to_be_visible()
+        self.assertEqual(auth_children.nth(0).locator("a").inner_text(), "Users")
+        expect(auth_children.nth(1)).to_be_visible()
+        self.assertEqual(auth_children.nth(1).locator("a").inner_text(), "Groups")
+
+        # news menu title voice
+        news_voice = root_voices.nth(2)
         self.assertEqual(
-            root_voices[2]
-            .find_element(By.CSS_SELECTOR, "span.has-children")
-            .get_attribute("innerText"),
+            news_voice.locator("span.has-children").inner_text(),
             "breaking_news_alt_1\nNEWS",
         )
-        self.assertEqual("title" in root_voices[2].get_attribute("class").split(), True)
-        self.assertEqual(
-            "default-open" in root_voices[2].get_attribute("class").split(), True
+        self.assertIn("title", news_voice.get_attribute("class").split())
+        self.assertIn("default-open", news_voice.get_attribute("class").split())
+
+        news_children = news_voice.locator(".depth-1 li:not(.nav-back)")
+        expect(news_children).to_have_count(3)
+        expect(news_children.nth(0)).to_be_visible()
+        self.assertTrue(
+            news_children.nth(0)
+            .locator("a")
+            .get_attribute("href")
+            .endswith("/admin/news/category/")
         )
-        news_children = root_voices[2].find_elements(By.CSS_SELECTOR, ".depth-1 li")
-        self.assertEqual(len(news_children), 3)
-        self.assertEqual(news_children[0].is_displayed(), True)
-        self.assertEqual(
-            news_children[0].find_element(By.TAG_NAME, "a").get_attribute("href"),
-            "http://localhost:8000/admin/news/category/",
+        expect(news_children.nth(1)).to_be_visible()
+        self.assertTrue(
+            news_children.nth(1)
+            .locator("a")
+            .get_attribute("href")
+            .endswith("/en/admin/news/news/")
         )
-        self.assertEqual(news_children[1].is_displayed(), True)
-        self.assertEqual(
-            news_children[1].find_element(By.TAG_NAME, "a").get_attribute("href"),
-            "http://localhost:8000/en/admin/news/news/",
+        expect(news_children.nth(2)).to_be_visible()
+        self.assertTrue(
+            news_children.nth(2)
+            .locator("a")
+            .get_attribute("href")
+            .endswith("/en/admin/news/tag/")
         )
-        self.assertEqual(news_children[2].is_displayed(), True)
-        self.assertEqual(
-            news_children[2].find_element(By.TAG_NAME, "a").get_attribute("href"),
-            "http://localhost:8000/en/admin/news/tag/",
-        )
+
         # hide subvoices after click
-        root_voices[2].find_element(By.CSS_SELECTOR, "span").click()
-        self.assertEqual(news_children[0].is_displayed(), False)
-        self.assertEqual(news_children[1].is_displayed(), False)
-        self.assertEqual(news_children[2].is_displayed(), False)
+        news_voice.locator("span").first.click()
+        expect(news_children.nth(0)).to_be_hidden()
+        expect(news_children.nth(1)).to_be_hidden()
+        expect(news_children.nth(2)).to_be_hidden()
 
         # tools voice
         self.assertEqual(
-            root_voices[3]
-            .find_element(By.CSS_SELECTOR, "span.has-children")
-            .get_attribute("innerText"),
+            root_voices.nth(3).locator("span.has-children").inner_text(),
             "construction\nTOOLS",
         )

@@ -1,0 +1,9 @@
+# Extra dependencies for the Playwright end-to-end tests (test_e2e_*).
+# Install on top of testapp/requirements.txt, then download the browser:
+#   pip install -r testapp/requirements-e2e.txt
+#   playwright install chromium
+#
+# The e2e suite was migrated off Selenium: it now uses Playwright driving a
+# StaticLiveServerTestCase (isolated test DB seeded from app/fixtures/e2e.json),
+# so no manually started runserver and no committed database are required.
+playwright

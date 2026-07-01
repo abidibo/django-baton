@@ -1,46 +1,19 @@
-import os
-import time
+from playwright.sync_api import expect
 
-from django.test import TestCase
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-
-from .utils import element_has_css_class, make_driver
-
-os.environ["WDM_LOG_LEVEL"] = "0"
+from .utils import PlaywrightTestCase
 
 
-class TestBatonClIncludes(TestCase):
+class TestBatonClIncludes(PlaywrightTestCase):
     def setUp(self):
-        self.driver = make_driver()
-        self.driver.set_window_size(1920, 1080)
-        self.driver.implicitly_wait(10)
-        self.login()
-        time.sleep(2)
-
-    def tearDown(self):
-        self.driver.quit()
-
-    def login(self):
-        self.driver.get("http://localhost:8000/admin/news/news/")
-        username_field = self.driver.find_element(By.ID, "id_username")
-        password_field = self.driver.find_element(By.ID, "id_password")
-        button = self.driver.find_element(By.CSS_SELECTOR, "input[type=submit]")
-
-        username_field.send_keys("admin")
-        time.sleep(1)
-        password_field.send_keys("admin")
-        time.sleep(1)
-        button.click()
+        super().setUp()
+        self.login("/admin/news/news/")
+        self.wait_baton_ready()
 
     def test_includes(self):
-        # Wait until baton is ready
-        wait = WebDriverWait(self.driver, 10)
-        wait.until(element_has_css_class((By.TAG_NAME, "body"), "baton-ready"))
-        time.sleep(2)
+        page = self.page
+        include = page.locator(".baton-cl-include-above")
+        expect(include).to_be_visible()
 
-        # tabs number
-        include = self.driver.find_element(By.CLASS_NAME, "baton-cl-include-above")
-        self.assertEqual(include.is_displayed(), True)
-        parent = include.find_element(By.XPATH, "following-sibling::*[1]")
-        self.assertEqual(parent.get_attribute("id"), "changelist-form")
+        # the element right after the include should be the changelist form
+        sibling = include.locator("xpath=following-sibling::*[1]")
+        self.assertEqual(sibling.get_attribute("id"), "changelist-form")

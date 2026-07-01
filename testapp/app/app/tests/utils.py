@@ -1,35 +1,77 @@
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
-from webdriver_manager.chrome import ChromeDriverManager
+"""Shared base class for the Playwright end-to-end tests.
+
+These tests were migrated from Selenium to Playwright. Instead of relying on a
+separately started `runserver` on a fixed port backed by the committed
+db.sqlite3, they use Django's StaticLiveServerTestCase: an isolated test
+database (seeded from the ``e2e.json`` fixture) served on a random port, with
+baton's static assets served automatically. Playwright's auto-waiting replaces
+the old explicit WebDriverWait/time.sleep dance.
+"""
+
+from __future__ import annotations
+
+import os
+
+# Playwright's sync API runs an event loop in the test thread; Django's async
+# safety guard would otherwise reject the (safe, single-threaded) DB access we
+# do around it. This is the approach documented by Django for Playwright.
+os.environ.setdefault("DJANGO_ALLOW_ASYNC_UNSAFE", "true")
+
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from playwright.sync_api import Page, sync_playwright
 
 
-class element_has_css_class(object):
-    """An expectation for checking that an element has a particular css class.
-    locator - used to find the element
-    returns the WebElement once it has the particular css class
-    """
+class PlaywrightTestCase(StaticLiveServerTestCase):
+    # Curated data (admin user, news with tabs/attachments, categories, tags,
+    # themes) dumped from the demo db; see app/fixtures/e2e.json.
+    fixtures = ["e2e.json"]
 
-    def __init__(self, locator, css_class):
-        self.locator = locator
-        self.css_class = css_class
+    # Desktop viewport by default; mobile test cases override it.
+    viewport = {"width": 1920, "height": 1080}
 
-    def __call__(self, driver):
-        element = driver.find_element(*self.locator)  # Finding the referenced element
-        if self.css_class in element.get_attribute("class"):
-            return element
-        else:
-            return False
+    @classmethod
+    def setUpClass(cls) -> None:
+        super().setUpClass()
+        cls.playwright = sync_playwright().start()
+        cls.browser = cls.playwright.chromium.launch(
+            headless=True,
+            args=["--no-sandbox", "--disable-dev-shm-usage"],
+        )
 
+    @classmethod
+    def tearDownClass(cls) -> None:
+        cls.browser.close()
+        cls.playwright.stop()
+        super().tearDownClass()
 
-def make_driver():
-    service = Service(ChromeDriverManager().install())
-    chrome_options = Options()
-    chrome_options.add_argument("--headless")
-    chrome_options.add_argument("--no-sandbox")
-    chrome_options.add_argument("--disable-extensions")
-    chrome_options.add_argument("--disable-dev-shm-usage")
-    return webdriver.Chrome(
-        service=service,
-        options=chrome_options,
-    )
+    def setUp(self) -> None:
+        self.context = self.browser.new_context(viewport=self.viewport)
+        self.page = self.context.new_page()
+        # baton relies on JS that can outlive the assertion; a generous default
+        # timeout keeps CI stable without per-call waits.
+        self.page.set_default_timeout(15000)
+
+    def tearDown(self) -> None:
+        self.context.close()
+
+    def url(self, path: str) -> str:
+        """Absolute URL on the live server for an admin/relative path."""
+        return f"{self.live_server_url}{path}"
+
+    def login(self, next_path: str = "/admin/") -> Page:
+        """Log in as the superuser through the admin login form.
+
+        Navigates to ``next_path`` first (which redirects to the login form when
+        unauthenticated), so after submitting we land back on the target page,
+        mirroring the original Selenium flow.
+        """
+        page = self.page
+        page.goto(self.url(next_path))
+        page.fill("#id_username", "admin")
+        page.fill("#id_password", "admin")
+        page.click("input[type=submit]")
+        return page
+
+    def wait_baton_ready(self) -> None:
+        """Wait until baton has finished bootstrapping the page."""
+        self.page.wait_for_selector("body.baton-ready")

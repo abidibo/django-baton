@@ -1,0 +1,642 @@
+[
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$ABuqIxUApLDxnoRmd0xWoH$WwTIpphBi62DoRNUhEtXIyr6EzS0xjSX6oJIZZpJrAY=",
+    "last_login": "2026-07-01T08:00:32.218Z",
+    "is_superuser": true,
+    "username": "admin",
+    "first_name": "",
+    "last_name": "",
+    "email": "opensource@otto.to.it",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2022-03-22T10:08:36Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$870000$U74NcswqbLXwvqejX2Z4j6$mxn5ndzi7ylFDJJQ6cNTa1dPzIfIWt20tJWUaLpzI+U=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "ciro",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2024-12-11T11:13:30.612Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$w7jZb7LRfkyBspAXQS12qn$1Jmmk+K/YjdQ/dRoKS6EktAaOFrwrNW//d8RygAcyyw=",
+    "last_login": "2026-06-05T16:34:51.584Z",
+    "is_superuser": true,
+    "username": "e2e",
+    "first_name": "",
+    "last_name": "",
+    "email": "e@e.it",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-06-05T16:04:24.221Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "news.activity",
+  "pk": 1,
+  "fields": {
+    "user": [
+      "admin"
+    ],
+    "activity_type": "L",
+    "date": "2022-03-22T10:13:18.008Z",
+    "image": "",
+    "image_alt": null,
+    "image_subject_location": null,
+    "content_type": [
+      "news",
+      "news"
+    ],
+    "object_id": 1
+  }
+},
+{
+  "model": "news.activity",
+  "pk": 2,
+  "fields": {
+    "user": [
+      "ciro"
+    ],
+    "activity_type": "F",
+    "date": "2025-05-21T15:13:08.489Z",
+    "image": "activity/img/ai_image.png",
+    "image_alt": "Man playing tennis with a frying pan.",
+    "image_subject_location": "82,60",
+    "content_type": [
+      "news",
+      "news"
+    ],
+    "object_id": 2
+  }
+},
+{
+  "model": "news.activity",
+  "pk": 3,
+  "fields": {
+    "user": [
+      "ciro"
+    ],
+    "activity_type": "L",
+    "date": "2026-02-11T14:13:09.777Z",
+    "image": "activity/img/ai_image_r8kkuJZ.png",
+    "image_alt": "crazy",
+    "image_subject_location": "50,50",
+    "content_type": [
+      "news",
+      "news"
+    ],
+    "object_id": 2
+  }
+},
+{
+  "model": "news.category",
+  "pk": 1,
+  "fields": {
+    "name": "Music"
+  }
+},
+{
+  "model": "news.category",
+  "pk": 2,
+  "fields": {
+    "name": "Sports"
+  }
+},
+{
+  "model": "news.category",
+  "pk": 3,
+  "fields": {
+    "name": "Culture"
+  }
+},
+{
+  "model": "news.tag",
+  "pk": 1,
+  "fields": {
+    "name": "Art",
+    "name_en": "Art",
+    "name_it": "Arte"
+  }
+},
+{
+  "model": "news.tag",
+  "pk": 2,
+  "fields": {
+    "name": "Museum",
+    "name_en": "Museum",
+    "name_it": "Museo"
+  }
+},
+{
+  "model": "news.tag",
+  "pk": 3,
+  "fields": {
+    "name": "Turin",
+    "name_en": "Turin",
+    "name_it": "Torino"
+  }
+},
+{
+  "model": "news.tag",
+  "pk": 4,
+  "fields": {
+    "name": "Technology",
+    "name_en": "Technology",
+    "name_it": "Tecnologia"
+  }
+},
+{
+  "model": "news.tag",
+  "pk": 5,
+  "fields": {
+    "name": "Events",
+    "name_en": "Events",
+    "name_it": "Eventi"
+  }
+},
+{
+  "model": "news.tag",
+  "pk": 6,
+  "fields": {
+    "name": "Culture",
+    "name_en": "Culture",
+    "name_it": "Cultura"
+  }
+},
+{
+  "model": "news.tag",
+  "pk": 9,
+  "fields": {
+    "name": "Artificial Intelligence",
+    "name_en": "Artificial Intelligence",
+    "name_it": "Artificial Intelligence"
+  }
+},
+{
+  "model": "news.tag",
+  "pk": 10,
+  "fields": {
+    "name": "Data Analysis",
+    "name_en": "Data Analysis",
+    "name_it": "Data Analysis"
+  }
+},
+{
+  "model": "news.tag",
+  "pk": 11,
+  "fields": {
+    "name": "Decision Making",
+    "name_en": "Decision Making",
+    "name_it": "Decision Making"
+  }
+},
+{
+  "model": "news.tag",
+  "pk": 12,
+  "fields": {
+    "name": "Business Transformation",
+    "name_en": "Business Transformation",
+    "name_it": "Business Transformation"
+  }
+},
+{
+  "model": "news.tag",
+  "pk": 13,
+  "fields": {
+    "name": "Policy Recommendations",
+    "name_en": "Policy Recommendations",
+    "name_it": "Policy Recommendations"
+  }
+},
+{
+  "model": "news.tag",
+  "pk": 14,
+  "fields": {
+    "name": "Tennis",
+    "name_en": "Tennis",
+    "name_it": "Tennis"
+  }
+},
+{
+  "model": "news.tag",
+  "pk": 15,
+  "fields": {
+    "name": "Doping Controversy",
+    "name_en": "Doping Controversy",
+    "name_it": "Doping Controversy"
+  }
+},
+{
+  "model": "news.tag",
+  "pk": 16,
+  "fields": {
+    "name": "Grand Slam",
+    "name_en": "Grand Slam",
+    "name_it": "Grand Slam"
+  }
+},
+{
+  "model": "news.tag",
+  "pk": 17,
+  "fields": {
+    "name": "Davis Cup",
+    "name_en": "Davis Cup",
+    "name_it": "Davis Cup"
+  }
+},
+{
+  "model": "news.tag",
+  "pk": 18,
+  "fields": {
+    "name": "Jannik Sinner",
+    "name_en": "Jannik Sinner",
+    "name_it": "Jannik Sinner"
+  }
+},
+{
+  "model": "news.tag",
+  "pk": 19,
+  "fields": {
+    "name": "ATP Finals",
+    "name_en": "ATP Finals",
+    "name_it": "ATP Finals"
+  }
+},
+{
+  "model": "news.news",
+  "pk": 1,
+  "fields": {
+    "category": 1,
+    "date": "2022-03-22",
+    "datetime": "2022-03-22T10:11:55Z",
+    "title": "Glen Hansard",
+    "title_en": "Glen Hansard",
+    "title_it": null,
+    "link": null,
+    "image": "news/img/abidibo_AKBG3fT.png",
+    "image_alt": null,
+    "image_subject_location": "50,50",
+    "body": null,
+    "body_en": null,
+    "body_it": null,
+    "body_summary": null,
+    "share": true,
+    "published": false,
+    "attachments_summary": "",
+    "attachments_summary_en": "",
+    "attachments_summary_it": "",
+    "videos_summary": "",
+    "videos_summary_en": "",
+    "videos_summary_it": "",
+    "status": 2,
+    "tags": []
+  }
+},
+{
+  "model": "news.news",
+  "pk": 2,
+  "fields": {
+    "category": 2,
+    "date": "2022-03-22",
+    "datetime": null,
+    "title": "Jannik Sinner's year",
+    "title_en": "Jannik Sinner's year",
+    "title_it": "L'anno di Jannik Sinner",
+    "link": null,
+    "image": "news/img/ai_image.png",
+    "image_alt": "Gnome walking in a forest.",
+    "image_subject_location": "50,50",
+    "body": {
+      "time": 1782814940650,
+      "blocks": [
+        {
+          "id": "GGmbTTdfE1",
+          "type": "paragraph",
+          "data": {
+            "text": "Jannik Sinner has been referred to as \"a special one,\" the Taylor Swift of Italy, and a puzzle no one can solve."
+          }
+        },
+        {
+          "id": "H3S-8TvEZy",
+          "type": "paragraph",
+          "data": {
+            "text": "One thing is undeniable: he will enter 2025 on the back of a historic season that has seen him break new ground."
+          }
+        },
+        {
+          "id": "QUZorn6x8h",
+          "type": "paragraph",
+          "data": {
+            "text": "Sinner has won two Grand Slam titles and the season-ending ATP Finals this year and capped it by securing back-to-back Davis Cup titles for Italy on Sunday."
+          }
+        },
+        {
+          "id": "509MSBK6SR",
+          "type": "paragraph",
+          "data": {
+            "text": "The 23-year-old has also been embroiled in an ongoing doping controversy that has left his immediate future uncertain."
+          }
+        },
+        {
+          "id": "WoJ9EsG-5C",
+          "type": "paragraph",
+          "data": {
+            "text": "BBC Sport looks at the numbers behind the Australian and US Open champion's sensational 2024."
+          }
+        }
+      ],
+      "version": "2.31.6"
+    },
+    "body_en": {
+      "time": 1782814940650,
+      "blocks": [
+        {
+          "id": "GGmbTTdfE1",
+          "type": "paragraph",
+          "data": {
+            "text": "Jannik Sinner has been referred to as \"a special one,\" the Taylor Swift of Italy, and a puzzle no one can solve."
+          }
+        },
+        {
+          "id": "H3S-8TvEZy",
+          "type": "paragraph",
+          "data": {
+            "text": "One thing is undeniable: he will enter 2025 on the back of a historic season that has seen him break new ground."
+          }
+        },
+        {
+          "id": "QUZorn6x8h",
+          "type": "paragraph",
+          "data": {
+            "text": "Sinner has won two Grand Slam titles and the season-ending ATP Finals this year and capped it by securing back-to-back Davis Cup titles for Italy on Sunday."
+          }
+        },
+        {
+          "id": "509MSBK6SR",
+          "type": "paragraph",
+          "data": {
+            "text": "The 23-year-old has also been embroiled in an ongoing doping controversy that has left his immediate future uncertain."
+          }
+        },
+        {
+          "id": "WoJ9EsG-5C",
+          "type": "paragraph",
+          "data": {
+            "text": "BBC Sport looks at the numbers behind the Australian and US Open champion's sensational 2024."
+          }
+        }
+      ],
+      "version": "2.31.6"
+    },
+    "body_it": {
+      "time": 1782813393152,
+      "blocks": [
+        {
+          "id": "EAmx01n8Rj",
+          "type": "paragraph",
+          "data": {
+            "text": "Jannik Sinner è stato definito \"unico\", il Taylor Swift d'Italia e un enigma che nessuno può risolvere."
+          }
+        },
+        {
+          "id": "c46xJSZgdD",
+          "type": "paragraph",
+          "data": {
+            "text": "Una cosa è indiscutibile: entrerà nel 2025 con alle spalle una stagione storica che lo ha visto aprire nuovi orizzonti."
+          }
+        },
+        {
+          "id": "J2z_09D5ui",
+          "type": "paragraph",
+          "data": {
+            "text": "Sinner ha vinto due titoli del Grande Slam e le ATP Finals di fine stagione quest'anno, e ha concluso il tutto assicurandosi titoli consecutivi di Coppa Davis per l'Italia domenica."
+          }
+        },
+        {
+          "id": "4nNS-h7EHF",
+          "type": "paragraph",
+          "data": {
+            "text": "Il 23enne è stato anche coinvolto in una controversia sul doping che ha lasciato incerto il suo futuro immediato."
+          }
+        },
+        {
+          "id": "GF4j-oroSM",
+          "type": "paragraph",
+          "data": {
+            "text": "BBC Sport esamina i numeri dietro la sensazionale stagione 2024 del campione australiano e degli US Open."
+          }
+        }
+      ],
+      "version": "2.31.6"
+    },
+    "body_summary": {
+      "time": 1782813414424,
+      "blocks": [
+        {
+          "id": "HMUHfFbBV_",
+          "type": "paragraph",
+          "data": {
+            "text": "Jannik Sinner, dubbed \"a special one\" and the \"Taylor Swift of Italy,\" enters 2025 after a historic season. He won two Grand Slam titles and the ATP Finals, also leading Italy to back-to-back Davis Cup victories. However, his future is clouded by an ongoing doping controversy. BBC Sport explores the statistics behind the Australian and US Open champion's impressive 2024."
+          }
+        }
+      ],
+      "version": "2.31.6"
+    },
+    "share": false,
+    "published": false,
+    "attachments_summary": "",
+    "attachments_summary_en": "",
+    "attachments_summary_it": "",
+    "videos_summary": "",
+    "videos_summary_en": "",
+    "videos_summary_it": "",
+    "status": 1,
+    "tags": []
+  }
+},
+{
+  "model": "news.news",
+  "pk": 3,
+  "fields": {
+    "category": 3,
+    "date": "2025-05-30",
+    "datetime": null,
+    "title": "Artificial Intelligence",
+    "title_en": "Artificial Intelligence",
+    "title_it": "Intelligenza Artificiale",
+    "link": null,
+    "image": "",
+    "image_alt": null,
+    "image_subject_location": "50,50",
+    "body": {
+      "time": 1782807468692,
+      "blocks": [
+        {
+          "id": "CUVhcEVSpP",
+          "type": "paragraph",
+          "data": {
+            "text": "Artificial intelligence (AI) is a wide-ranging tool that enables people to rethink how we integrate information, analyze data, and use the resulting insights to improve decision making—and already it is transforming every walk of life. In this report, Darrell West and John Allen discuss AI’s application across a variety of sectors, address issues in its development, and offer recommendations for getting the most out of AI while still protecting imporant human values."
+          }
+        },
+        {
+          "id": "Xa5dKzDh91",
+          "type": "paragraph",
+          "data": {
+            "text": "Most people are not very familiar with the concept of artificial intelligence (AI). As an illustration, when 1,500 senior business leaders in the United States in 2017 were asked about AI, only 17 percent said they were familiar with it.1 A number of them were not sure what it was or how it would affect their particular companies. They understood there was considerable potential for altering business processes, but were not clear how AI could be deployed within their own organizations."
+          }
+        },
+        {
+          "id": "jr_Z6Nj9SO",
+          "type": "paragraph",
+          "data": {
+            "text": "Despite its widespread lack of familiarity, AI is a technology that is transforming every walk of life. It is a wide-ranging tool that enables people to rethink how we integrate information, analyze data, and use the resulting insights to improve decisionmaking. Our hope through this comprehensive overview is to explain AI to an audience of policymakers, opinion leaders, and interested observers, and demonstrate how AI already is altering the world and raising important questions for society, the economy, and governance."
+          }
+        }
+      ],
+      "version": "2.31.6"
+    },
+    "body_en": {
+      "time": 1782807468692,
+      "blocks": [
+        {
+          "id": "CUVhcEVSpP",
+          "type": "paragraph",
+          "data": {
+            "text": "Artificial intelligence (AI) is a wide-ranging tool that enables people to rethink how we integrate information, analyze data, and use the resulting insights to improve decision making—and already it is transforming every walk of life. In this report, Darrell West and John Allen discuss AI’s application across a variety of sectors, address issues in its development, and offer recommendations for getting the most out of AI while still protecting imporant human values."
+          }
+        },
+        {
+          "id": "Xa5dKzDh91",
+          "type": "paragraph",
+          "data": {
+            "text": "Most people are not very familiar with the concept of artificial intelligence (AI). As an illustration, when 1,500 senior business leaders in the United States in 2017 were asked about AI, only 17 percent said they were familiar with it.1 A number of them were not sure what it was or how it would affect their particular companies. They understood there was considerable potential for altering business processes, but were not clear how AI could be deployed within their own organizations."
+          }
+        },
+        {
+          "id": "jr_Z6Nj9SO",
+          "type": "paragraph",
+          "data": {
+            "text": "Despite its widespread lack of familiarity, AI is a technology that is transforming every walk of life. It is a wide-ranging tool that enables people to rethink how we integrate information, analyze data, and use the resulting insights to improve decisionmaking. Our hope through this comprehensive overview is to explain AI to an audience of policymakers, opinion leaders, and interested observers, and demonstrate how AI already is altering the world and raising important questions for society, the economy, and governance."
+          }
+        }
+      ],
+      "version": "2.31.6"
+    },
+    "body_it": {
+      "time": 1782807480322,
+      "blocks": [
+        {
+          "id": "BHdQG2_-W6",
+          "type": "paragraph",
+          "data": {
+            "text": "L'intelligenza artificiale (IA) è uno strumento ampio che consente alle persone di ripensare a come integriamo le informazioni, analizziamo i dati e utilizziamo le intuizioni risultanti per migliorare il processo decisionale—e già sta trasformando ogni ambito della vita. In questo rapporto, Darrell West e John Allen discutono l'applicazione dell'IA in vari settori, affrontano questioni nel suo sviluppo e offrono raccomandazioni per sfruttare al meglio l'IA pur proteggendo valori umani importanti."
+          }
+        },
+        {
+          "id": "7RIlVE4vT0",
+          "type": "paragraph",
+          "data": {
+            "text": "La maggior parte delle persone non è molto familiare con il concetto di intelligenza artificiale (IA). A titolo di esempio, quando nel 2017 sono stati chiesti a 1.500 dirigenti aziendali senior negli Stati Uniti riguardo all'IA, solo il 17% ha affermato di conoscerla.1 Molti di loro non sapevano esattamente cosa fosse o come avrebbe influenzato le loro specifiche aziende. Comprendevano che c'era un potenziale considerevole per alterare i processi aziendali, ma non era chiaro come l'IA potesse essere implementata all'interno delle proprie organizzazioni."
+          }
+        },
+        {
+          "id": "zgOfuScFEk",
+          "type": "paragraph",
+          "data": {
+            "text": "Nonostante la sua diffusa mancanza di familiarità, l'IA è una tecnologia che sta trasformando ogni ambito della vita. È uno strumento ampio che consente alle persone di ripensare a come integriamo le informazioni, analizziamo i dati e utilizziamo le intuizioni risultanti per migliorare il processo decisionale. La nostra speranza attraverso questa panoramica completa è spiegare l'IA a un pubblico di responsabili politici, leader d'opinione e osservatori interessati, e dimostrare come l'IA stia già alterando il mondo e sollevando importanti questioni per la società, l'economia e la governance."
+          }
+        }
+      ],
+      "version": "2.31.6"
+    },
+    "body_summary": {
+      "time": 1782807498797,
+      "blocks": [
+        {
+          "id": "7l4BG-0sQG",
+          "type": "paragraph",
+          "data": {
+            "text": "Artificial intelligence (AI) is a transformative tool reshaping how we analyze data and improve decision-making across various sectors. In this report, Darrell West and John Allen explore AI's applications, development issues, and recommendations for maximizing its benefits while upholding human values. Despite its potential, AI remains unfamiliar to many; a 2017 survey revealed only 17% of U.S. senior business leaders understood it, highlighting the need for comprehensive explanations for policymakers and the public on AI's societal impacts."
+          }
+        }
+      ],
+      "version": "2.31.6"
+    },
+    "share": false,
+    "published": false,
+    "attachments_summary": "",
+    "attachments_summary_en": "",
+    "attachments_summary_it": "",
+    "videos_summary": "",
+    "videos_summary_en": "",
+    "videos_summary_it": "",
+    "status": 2,
+    "tags": []
+  }
+},
+{
+  "model": "news.attachment",
+  "pk": 1,
+  "fields": {
+    "news": 1,
+    "file": "news/img/otto.png",
+    "caption": "Otto logo"
+  }
+},
+{
+  "model": "news.video",
+  "pk": 1,
+  "fields": {
+    "news": 1,
+    "code": "IWHuWlYEuxM",
+    "caption": "Bruce Springsteen And The E Street Band\r\nSpecial Guest: Glen Hansard\r\nDrive All Night",
+    "author_email": null
+  }
+},
+{
+  "model": "baton.batontheme",
+  "pk": 1,
+  "fields": {
+    "name": "Light1",
+    "theme": "/* BATON */\r\n:root, [data-bs-theme=\"light\"] {\r\n    /* main */\r\n    --body-bg: #fff;\r\n    --darkened-bg: #fff;\r\n    --border-color: #dee2e6;\r\n    --bs-baton-body-bg: #fff;\r\n    --bs-baton-content-bg: #fff;\r\n    --bs-baton-content-title-bg: #fff;\r\n    --bs-btn-active-color: #fff;\r\n    --bs-btn-active-bg: #fa9f1b;\r\n    --bs-btn-active-border-color: #fa9f1b;\r\n    --bs-baton-accent-color: #9fcc2e\r\n\r\n    /* utils */\r\n    --bs-baton-warning-color: #d39e00;\r\n    --bs-baton-danger-color: #dc3545;\r\n\r\n    /* login */\r\n    --bs-baton-login-bg: #fff;\r\n    --bs-baton-login-password-visibility-toggler-icon-fg: #999;\r\n\r\n    /* dashboard */\r\n    --bs-baton-dashboard-bg: #fff;\r\n    --bs-baton-dashboard-module-bg: #fff;\r\n    --bs-baton-dashboard-module-border-color: #fff;\r\n    --bs-baton-dashboard-caption-bg: #f6f6f6;\r\n    --bs-baton-dashboard-caption-color: #000;\r\n    --bs-baton-dashboard-icon-color: #9fcc2e;\r\n    --bs-baton-dashboard-delete-bg: #dc3545;\r\n    --bs-baton-dashboard-add-bg: #fa9f1b;\r\n    --bs-baton-dashboard-change-bg: #007eed;\r\n    --bs-baton-dashboard-action-list-border-color: #e7e7e7;\r\n\r\n    /* navbar */\r\n    --bs-baton-navbar-bg: #25476a;\r\n    --bs-baton-navbar-color: #fff;\r\n    --bs-baton-navbar-link-color: #fff;\r\n    --bs-baton-navbar-link-hover-color: #d32d41;\r\n    --bs-baton-navbar-dropdown-link-color: #000;\r\n    --bs-baton-navbar-mobile-pane-bg: #263238;\r\n\r\n    /* menu */\r\n    --bs-baton-menu-bg: #EDF1F6;\r\n    --bs-baton-menu-color: #000;\r\n    --bs-baton-menu-branding-color: #fff;\r\n    --bs-baton-menu-gravatar-border-color: #fff;\r\n    --bs-baton-menu-user-links-color: #fa9f1b;\r\n    --bs-baton-menu-link-color: #25476a;\r\n    --bs-baton-menu-link-hover-color: #03a9f4;\r\n    --bs-baton-menu-li-hover-bg: #f8f8f8;\r\n    --bs-baton-menu-active-voice-bg: #fff;\r\n    --bs-baton-menu-active-voice-border-color: #fff;\r\n    --bs-baton-menu-mobile-title-bg: #25476a;\r\n    --bs-baton-menu-mobile-title-color: #EDF1F6;\r\n    --bs-baton-menu-mobile-back-bg: #E1E7F0;\r\n    --bs-baton-menu-selected-sub-bg: #EDF1F6;\r\n    --bs-baton-menu-title-bg: #EDF1F6;\r\n    --bs-baton-menu-voice-title-color: #25476a;\r\n    --bs-baton-menu-voice-title-bg: #EDF1F6;\r\n    --bs-baton-menu-branding-bg: #25476a;\r\n\r\n    /* search field */\r\n    --bs-baton-search-field-input-bg: #fff;\r\n    --bs-baton-search-field-input-border-color: #e0e0e0;\r\n    --bs-baton-search-field-color: #000;\r\n    --bs-baton-search-field-datalist-bg: #25476a;\r\n    --bs-baton-search-field-icon-color: #fa9f1b;\r\n    --bs-baton-search-field-link-color: #fff;\r\n    --bs-baton-search-field-selected-bg: #03a9f4;\r\n    --bs-baton-search-field-selected-color: #fff;\r\n\r\n    /* breadcrumbs */\r\n    --bs-baton-breadcrumbs-bg: #25476a;\r\n    --bs-baton-breadcrumbs-link-color: #9fcc2e;\r\n    --bs-baton-breadcrumbs-color: #fff;\r\n\r\n    /* changelist */\r\n    --bs-baton-changelist-bg: #fff;\r\n    --bs-baton-changelist-border-color: #fff;\r\n    --bs-baton-changelist-toolbar-bg: #E1E7F0;\r\n    --bs-baton-changelist-toolbar-btn-bg: #f0f0f0;\r\n    --bs-baton-changelist-toolbar-btn-color: #000;\r\n    --bs-baton-changelist-toolbar-btn-hover-bg: #fafafa;\r\n    --bs-baton-changelist-sort-icon-color: #999;\r\n    --bs-baton-changelist-filters-bg: #fafafa;\r\n    --bs-baton-changelist-filters-title-bg: #263238;\r\n    --bs-baton-changelist-filters-title-color: #fff;\r\n    --bs-baton-changelist-filter-selected-border-color: #000;\r\n    --bs-baton-changelist-filters-clear-bg: #17a2b8;\r\n    --bs-baton-changelist-rl-head-bg: #f0f0f0;\r\n    --bs-baton-changelist-rl-head-color: inherit;\r\n    --bs-baton-changelist-rl-tr-odd-bg: rgba(0, 0, 0, 0.01);\r\n    --bs-baton-changelist-rl-tr-odd-color: inherit;\r\n    --bs-baton-changelist-rl-tr-selected-bg-color: #EDF1F6;\r\n    --bs-baton-changelist-rl-tr-selected-bg: #EDF1F6;\r\n    --bs-baton-changelist-rl-tr-selected-color: inherit;\r\n\r\n    /* changeform */\r\n    --bs-baton-changeform-bg: #fff;\r\n    --bs-baton-changeform-border-color: #fff;\r\n    --bs-baton-changeform-collapse-entry-icon-color: #666;\r\n    --bs-baton-changeform-field-bg: #fff;\r\n    --bs-baton-changeform-field-row-error-bg: #f2dede;\r\n    --bs-baton-changeform-fieldset-title-bg: #f6f8fa;\r\n    --bs-baton-changeform-fieldset-nested-title-bg: #fbebed;\r\n    --bs-baton-changeform-inline-related-title-bg: #fafafa;\r\n    --bs-baton-changeform-inline-related-title-border-color: #eee;\r\n    --bs-baton-changeform-inline-related-title-border-top-color: #eee;\r\n    --bs-baton-changeform-inline-changelink-bg: #ffe4dc;\r\n    --bs-baton-changeform-inline-tabular-original-bg: #fafafa;\r\n    --bs-baton-changeform-inline-tabular-original-border-color: #eee;\r\n    --bs-baton-changeform-help-text-color: #007eed;\r\n    --bs-baton-changeform-clockbox-title-bg: #eee;\r\n    --bs-baton-changeform-clockbox-title-border-color: #ddd;\r\n    --bs-baton-changeform-spinner-overlay-bg: rgba(255, 255, 255, 0.8);\r\n    --bs-baton-changeform-spinner-overlay-color: #000;\r\n    --bs-baton-changeform-selector-item-border-color: #ccc;\r\n    --bs-baton-changeform-selector-available-title-bg: #fafafa;\r\n    --bs-baton-changeform-selector-chosen-title-bg: #f6f8fa;\r\n    --bs-baton-changeform-selector-chooser-bg: #eee;\r\n    --bs-baton-changeform-selector-button-bg: #eee;\r\n    --bs-baton-changeform-selector-button-color: #000;\r\n    --bs-baton-changeform-submit-row-bg: #EEF2F6;\r\n\r\n    /* calendar */\r\n    --bs-baton-calendar-bg: #fff;\r\n    --bs-baton-calendar-header-bg: #f5f5f5;\r\n    --bs-baton-calendar-header-color: #000;\r\n    --bs-baton-calendar-cell-th-bg: #fafafa;\r\n    --bs-baton-calendar-cell-bg: #fff;\r\n    --bs-baton-calendar-cell-color: #000;\r\n    --bs-baton-calendar-cell-nonday-bg: #f8f8f8;\r\n    --bs-baton-calendar-cell-th-border-color: #ccc;\r\n    --bs-baton-calendar-cell-td-border-color: #f0f0f0;\r\n    --bs-baton-calendar-shortcuts-bg: #eee;\r\n    --bs-baton-calendar-shortcuts-color: ##8e9b00;\r\n    --bs-baton-calendar-cancel-bg: #b3c100;\r\n    --bs-baton-calendar-cancel-color: #fff;\r\n\r\n    /* changehistory */\r\n    --bs-baton-changehistory-bg: #fff;\r\n    --bs-baton-changehistory-border-color: #fff;\r\n\r\n    /* delete confirmation */\r\n    --bs-baton-delete-confirmation-bg: #fff;\r\n    --bs-baton-delete-confirmation-border-color: #fff;\r\n\r\n    /* pagination */\r\n    --bs-baton-pagination-bg: #fff;\r\n    --bs-baton-pagination-hover-bg: #eee;\r\n    --bs-baton-pagination-border-color: #eee;\r\n    --bs-baton-pagination-color: #000;\r\n    --bs-baton-pagination-selected-bg: #455a64;\r\n    --bs-baton-pagination-selected-color: #fff;\r\n    --bs-baton-pagination-selected-border-color: #455a64;\r\n\r\n    /* modal */\r\n    --bs-baton-modal-back-btn-bg: #007eed;\r\n    --bs-baton-modal-back-btn-color: #fff;\r\n\r\n    /* admindocs */\r\n    --bs-baton-admindocs-module-bg: #fff;\r\n    --bs-baton-admindocs-module-header-bg: #f6f6f6;\r\n    --bs-baton-admindocs-module-header-border-color: #fff;\r\n    --bs-baton-admindocs-simple-bg: #ddd;\r\n    --bs-baton-admindocs-pre-bg: #333;\r\n    --bs-baton-admindocs-pre-color: #fff;\r\n    --bs-baton-admindocs-table-border-color: #e0e0e0;\r\n\r\n    /* footer */\r\n    --bs-baton-footer-bg: #E1E7F0;\r\n    --bs-baton-footer-color: #25476a;\r\n    --bs-baton-footer-link-color: #c07404;\r\n    --bs-baton-footer-link-hover-color: #000;\r\n    --bs-baton-footer-support-color: #25476a;\r\n    --bs-baton-footer-support-bg: #9fcc2e;\r\n}\r\n\r\n[data-bs-theme=\"dark\"] {\r\n    /* main */\r\n    --body-bg: #202020;\r\n    --darkened-bg: #212529;\r\n    --border-color: #495057;\r\n    --bs-primary: #7f1b27;\r\n    --bs-baton-body-bg: #202020;\r\n    --bs-baton-content-bg: #202020;\r\n    --bs-baton-content-title-bg: #303D46;\r\n    --bs-btn-active-color: #000;\r\n    --bs-btn-active-bg: #f90;\r\n    --bs-btn-active-border-color: #f90;\r\n    --bs-baton-accent-color: #b3c100;\r\n\r\n    /* utils */\r\n    --bs-baton-warning-color: #d39e00;\r\n    --bs-baton-danger-color: #f3b7bd;\r\n\r\n    /* login */\r\n    --bs-baton-login-bg: #292929;\r\n    --bs-baton-login-password-visibility-toggler-icon-fg: #999;\r\n\r\n    /* dashboard */\r\n    --bs-baton-dashboard-bg: #222;\r\n    --bs-baton-dashboard-module-bg: #333;\r\n    --bs-baton-dashboard-module-border-color: #333;\r\n    --bs-baton-dashboard-caption-bg: #333;\r\n    --bs-baton-dashboard-caption-color: #fff;\r\n    --bs-baton-dashboard-icon-color: #f90;\r\n    --bs-baton-dashboard-delete-bg: #dc3545;\r\n    --bs-baton-dashboard-add-bg: #28a745;\r\n    --bs-baton-dashboard-change-bg: #007eed;\r\n    --bs-baton-dashboard-action-list-border-color: #666;\r\n\r\n    /* navbar */\r\n    --bs-baton-navbar-bg: #101010;\r\n    --bs-baton-navbar-color: #fff;\r\n    --bs-baton-navbar-link-color: #fff;\r\n    --bs-baton-navbar-link-hover-color: #d32d41;\r\n    --bs-baton-navbar-dropdown-link-color: #fff;\r\n    --bs-baton-navbar-mobile-pane-bg: #263238;\r\n\r\n    /* menu */\r\n    --bs-baton-menu-bg: #161c20;\r\n    --bs-baton-menu-color: #fff;\r\n    --bs-baton-menu-branding-color: #fff;\r\n    --bs-baton-menu-gravatar-border-color: #fff;\r\n    --bs-baton-menu-user-links-color: #b3c100;\r\n    --bs-baton-menu-link-color: #ccc;\r\n    --bs-baton-menu-link-hover-color: #fff;\r\n    --bs-baton-menu-li-hover-bg: #152127;\r\n    --bs-baton-menu-active-voice-bg: #7f1b27;\r\n    --bs-baton-menu-active-voice-border-color: #666;\r\n    --bs-baton-menu-mobile-title-bg: #212121;\r\n    --bs-baton-menu-mobile-title-color: #fff;\r\n    --bs-baton-menu-mobile-back-bg: #1c2429;\r\n    --bs-baton-menu-selected-sub-bg: #263238;\r\n    --bs-baton-menu-title-bg: #11171a;\r\n    --bs-baton-menu-title-color: #2d3940;\r\n    --bs-baton-menu-voice-title-color: #d32d41;\r\n    --bs-baton-menu-voice-title-bg: #11171a;\r\n    --bs-baton-menu-branding-bg: #12171a;\r\n\r\n    /* search field */\r\n    --bs-baton-search-field-input-bg: #3b4d56;\r\n    --bs-baton-search-field-input-border-color: #1c2429;\r\n    --bs-baton-search-field-color: #fff;\r\n    --bs-baton-search-field-datalist-bg: #1c2429;\r\n    --bs-baton-search-field-icon-color: #6dbbff;\r\n    --bs-baton-search-field-link-color: #fff;\r\n    --bs-baton-search-field-selected-bg: #4f6875;\r\n    --bs-baton-search-field-selected-color: #fff;\r\n\r\n    /* breadcrumbs */\r\n    --bs-baton-breadcrumbs-bg: #212121;\r\n    --bs-baton-breadcrumbs-color: #aaa;\r\n\r\n    /* changelist */\r\n    --bs-baton-changelist-bg: #252525;\r\n    --bs-baton-changelist-border-color: #202020;\r\n    --bs-baton-changelist-toolbar-bg: #2a2a2a;\r\n    --bs-baton-changelist-toolbar-btn-bg: rgba(0, 0, 0, .2);\r\n    --bs-baton-changelist-toolbar-btn-color: #fff;\r\n    --bs-baton-changelist-toolbar-btn-hover-bg: #111;\r\n    --bs-baton-changelist-sort-icon-color: #999;\r\n    --bs-baton-changelist-filters-bg: #252525;\r\n    --bs-baton-changelist-filters-title-bg: #444;\r\n    --bs-baton-changelist-filters-title-color: #fff;\r\n    --bs-baton-changelist-filter-selected-border-color: #000;\r\n    --bs-baton-changelist-filters-clear-bg: #17a2b8;\r\n    --bs-baton-changelist-rl-head-bg: #f0f0f0;\r\n    --bs-baton-changelist-rl-head-color: inherit;\r\n    --bs-baton-changelist-rl-tr-odd-bg: rgba(0, 0, 0, .05);\r\n    --bs-baton-changelist-rl-tr-odd-color: inherit;\r\n    --bs-baton-changelist-rl-tr-selected-bg-color: #cfc4a8;\r\n    --bs-baton-changelist-rl-tr-selected-bg: #e1dac9;\r\n    --bs-baton-changelist-rl-tr-selected-color: inherit;\r\n\r\n    /* changeform */\r\n    --bs-baton-changeform-bg: #252525;\r\n    --bs-baton-changeform-border-color: #202020;\r\n    --bs-baton-changeform-collapse-entry-icon-color: #666;\r\n    --bs-baton-changeform-field-bg: #313131;\r\n    --bs-baton-changeform-field-row-error-bg: #843434;\r\n    --bs-baton-changeform-fieldset-title-bg: #380c11;\r\n    --bs-baton-changeform-fieldset-nested-title-bg: #27080c;\r\n    --bs-baton-changeform-inline-related-title-bg: #380c11; \r\n    --bs-baton-changeform-inline-related-title-border-color: #6b1621;\r\n    --bs-baton-changeform-inline-related-title-border-top-color: #6b1621;\r\n    --bs-baton-changeform-inline-changelink-bg: #ffe4dc;\r\n    --bs-baton-changeform-inline-tabular-original-bg: #000;\r\n    --bs-baton-changeform-inline-tabular-original-border-color: #111;\r\n    --bs-baton-changeform-help-text-color: #6dbbff;\r\n    --bs-baton-changeform-clockbox-title-bg: #333;\r\n    --bs-baton-changeform-clockbox-title-border-color: #222;\r\n    --bs-baton-changeform-spinner-overlay-bg: rgba(0, 0, 0, .8);\r\n    --bs-baton-changeform-spinner-overlay-color: #fff;\r\n    --bs-baton-changeform-selector-item-border-color: #222;\r\n    --bs-baton-changeform-selector-available-title-bg: #333;\r\n    --bs-baton-changeform-selector-chosen-title-bg: #323232;\r\n    --bs-baton-changeform-selector-chooser-bg: #222;\r\n    --bs-baton-changeform-selector-button-bg: #111;\r\n    --bs-baton-changeform-selector-button-color: #fff;\r\n    --bs-baton-changeform-submit-row-bg: #1c2429;\r\n\r\n    /* calendar */\r\n    --bs-baton-calendar-bg: #111;\r\n    --bs-baton-calendar-header-bg: #666;\r\n    --bs-baton-calendar-header-color: #fff;\r\n    --bs-baton-calendar-cell-th-bg: #202020;\r\n    --bs-baton-calendar-cell-bg: #222;\r\n    --bs-baton-calendar-cell-color: #fff;\r\n    --bs-baton-calendar-cell-nonday-bg: #303030;\r\n    --bs-baton-calendar-cell-th-border-color: #333;\r\n    --bs-baton-calendar-cell-td-border-color: #222;\r\n    --bs-baton-calendar-shortcuts-bg: #404040;\r\n    --bs-baton-calendar-shortcuts-color: #b3c100;\r\n    --bs-baton-calendar-cancel-bg: #b3c100;\r\n    --bs-baton-calendar-shortcuts-color: #fff;\r\n\r\n    /* changehistory */\r\n    --bs-baton-changehistory-bg: #222;\r\n    --bs-baton-changehistory-border-color: #222;\r\n\r\n    /* delete confirmation */\r\n    --bs-baton-delete-confirmation-bg: #222;\r\n    --bs-baton-delete-confirmation-border-color: #222;\r\n\r\n    /* pagination */\r\n    --bs-baton-pagination-bg: #222;\r\n    --bs-baton-pagination-hover-bg: #111;\r\n    --bs-baton-pagination-border-color: #111;\r\n    --bs-baton-pagination-color: #fff;\r\n    --bs-baton-pagination-selected-bg: #666;\r\n    --bs-baton-pagination-selected-color: #fff;\r\n    --bs-baton-pagination-selected-border-color: #455a64;\r\n\r\n    /* modal */\r\n    --bs-baton-modal-back-btn-bg: #007eed;\r\n    --bs-baton-modal-back-btn-color: #fff;\r\n\r\n    /* admindocs */\r\n    --bs-baton-admindocs-module-bg: #222;\r\n    --bs-baton-admindocs-module-header-bg: #333;\r\n    --bs-baton-admindocs-module-header-border-color: #000;\r\n    --bs-baton-admindocs-simple-bg: #444;\r\n    --bs-baton-admindocs-pre-bg: #333;\r\n    --bs-baton-admindocs-pre-color: #fff;\r\n    --bs-baton-admindocs-table-border-color: #202020;\r\n\r\n    /* footer */\r\n    --bs-baton-footer-bg: #1e1e1e;\r\n    --bs-baton-footer-color: #fff;\r\n    --bs-baton-footer-link-color: #b3c100;\r\n    --bs-baton-footer-link-hover-color: #848e00;\r\n    --bs-baton-footer-support-color: #fff;\r\n    --bs-baton-footer-support-bg: #111;\r\n}",
+    "active": false
+  }
+},
+{
+  "model": "baton.batontheme",
+  "pk": 2,
+  "fields": {
+    "name": "Light2",
+    "theme": "/* BATON */\r\n:root, [data-bs-theme=\"light\"] {\r\n    /* main */\r\n    --body-bg: #fff;\r\n    --darkened-bg: #fff;\r\n    --border-color: #dee2e6;\r\n    --bs-baton-body-bg: #fff;\r\n    --bs-baton-content-bg: #EDF1F6;\r\n    --bs-baton-content-title-bg: #EDF1F6;\r\n    --bs-btn-active-color: #fff;\r\n    --bs-btn-active-bg: #fa9f1b;\r\n    --bs-btn-active-border-color: #fa9f1b;\r\n    --bs-baton-accent-color: #9fcc2e\r\n\r\n    /* utils */\r\n    --bs-baton-warning-color: #d39e00;\r\n    --bs-baton-danger-color: #dc3545;\r\n\r\n    /* login */\r\n    --bs-baton-login-bg: #fff;\r\n    --bs-baton-login-password-visibility-toggler-icon-fg: #999;\r\n\r\n    /* dashboard */\r\n    --bs-baton-dashboard-bg: #f5f5f5;\r\n    --bs-baton-dashboard-module-bg: #fff;\r\n    --bs-baton-dashboard-module-border-color: #fff;\r\n    --bs-baton-dashboard-caption-bg: #f6f6f6;\r\n    --bs-baton-dashboard-caption-color: #000;\r\n    --bs-baton-dashboard-icon-color: #9fcc2e;\r\n    --bs-baton-dashboard-delete-bg: #dc3545;\r\n    --bs-baton-dashboard-add-bg: #fa9f1b;\r\n    --bs-baton-dashboard-change-bg: #007eed;\r\n    --bs-baton-dashboard-action-list-border-color: #e7e7e7;\r\n\r\n    /* navbar */\r\n    --bs-baton-navbar-bg: #25476a;\r\n    --bs-baton-navbar-color: #fff;\r\n    --bs-baton-navbar-link-color: #fff;\r\n    --bs-baton-navbar-link-hover-color: #d32d41;\r\n    --bs-baton-navbar-dropdown-link-color: #000;\r\n    --bs-baton-navbar-mobile-pane-bg: #263238;\r\n\r\n    /* menu */\r\n    --bs-baton-menu-bg: #fff;\r\n    --bs-baton-menu-color: #000;\r\n    --bs-baton-menu-branding-color: #fff;\r\n    --bs-baton-menu-gravatar-border-color: #fff;\r\n    --bs-baton-menu-user-links-color: #fa9f1b;\r\n    --bs-baton-menu-link-color: #25476a;\r\n    --bs-baton-menu-link-hover-color: #03a9f4;\r\n    --bs-baton-menu-li-hover-bg: #f8f8f8;\r\n    --bs-baton-menu-active-voice-bg: #f7f7f7;\r\n    --bs-baton-menu-active-voice-border-color: #f7f7f7;\r\n    --bs-baton-menu-mobile-title-bg: #25476a;\r\n    --bs-baton-menu-mobile-title-color: #fff;\r\n    --bs-baton-menu-mobile-back-bg: #E1E7F0;\r\n    --bs-baton-menu-selected-sub-bg: #fff;\r\n    --bs-baton-menu-title-bg: #fff;\r\n    --bs-baton-menu-voice-title-color: #25476a;\r\n    --bs-baton-menu-voice-title-bg: #fff;\r\n    --bs-baton-menu-branding-bg: #25476a;\r\n\r\n    /* search field */\r\n    --bs-baton-search-field-input-bg: #fff;\r\n    --bs-baton-search-field-input-border-color: #e0e0e0;\r\n    --bs-baton-search-field-color: #000;\r\n    --bs-baton-search-field-datalist-bg: #25476a;\r\n    --bs-baton-search-field-icon-color: #fa9f1b;\r\n    --bs-baton-search-field-link-color: #fff;\r\n    --bs-baton-search-field-selected-bg: #03a9f4;\r\n    --bs-baton-search-field-selected-color: #fff;\r\n\r\n    /* breadcrumbs */\r\n    --bs-baton-breadcrumbs-bg: #25476a;\r\n    --bs-baton-breadcrumbs-link-color: #9fcc2e;\r\n    --bs-baton-breadcrumbs-color: #fff;\r\n\r\n    /* changelist */\r\n    --bs-baton-changelist-bg: #fff;\r\n    --bs-baton-changelist-border-color: #fff;\r\n    --bs-baton-changelist-toolbar-bg: #E1E7F0;\r\n    --bs-baton-changelist-toolbar-btn-bg: #f0f0f0;\r\n    --bs-baton-changelist-toolbar-btn-color: #000;\r\n    --bs-baton-changelist-toolbar-btn-hover-bg: #fafafa;\r\n    --bs-baton-changelist-sort-icon-color: #999;\r\n    --bs-baton-changelist-filters-bg: #fafafa;\r\n    --bs-baton-changelist-filters-title-bg: #263238;\r\n    --bs-baton-changelist-filters-title-color: #fff;\r\n    --bs-baton-changelist-filter-selected-border-color: #000;\r\n    --bs-baton-changelist-filters-clear-bg: #17a2b8;\r\n    --bs-baton-changelist-rl-head-bg: #f0f0f0;\r\n    --bs-baton-changelist-rl-head-color: inherit;\r\n    --bs-baton-changelist-rl-tr-odd-bg: rgba(0, 0, 0, 0.01);\r\n    --bs-baton-changelist-rl-tr-odd-color: inherit;\r\n    --bs-baton-changelist-rl-tr-selected-bg-color: #EDF1F6;\r\n    --bs-baton-changelist-rl-tr-selected-bg: #EDF1F6;\r\n    --bs-baton-changelist-rl-tr-selected-color: inherit;\r\n\r\n    /* changeform */\r\n    --bs-baton-changeform-bg: #fff;\r\n    --bs-baton-changeform-border-color: #fff;\r\n    --bs-baton-changeform-collapse-entry-icon-color: #666;\r\n    --bs-baton-changeform-field-bg: #fff;\r\n    --bs-baton-changeform-field-row-error-bg: #f2dede;\r\n    --bs-baton-changeform-fieldset-title-bg: #f6f8fa;\r\n    --bs-baton-changeform-fieldset-nested-title-bg: #fbebed;\r\n    --bs-baton-changeform-inline-related-title-bg: #fafafa;\r\n    --bs-baton-changeform-inline-related-title-border-color: #eee;\r\n    --bs-baton-changeform-inline-related-title-border-top-color: #eee;\r\n    --bs-baton-changeform-inline-changelink-bg: #ffe4dc;\r\n    --bs-baton-changeform-inline-tabular-original-bg: #fafafa;\r\n    --bs-baton-changeform-inline-tabular-original-border-color: #eee;\r\n    --bs-baton-changeform-help-text-color: #007eed;\r\n    --bs-baton-changeform-clockbox-title-bg: #eee;\r\n    --bs-baton-changeform-clockbox-title-border-color: #ddd;\r\n    --bs-baton-changeform-spinner-overlay-bg: rgba(255, 255, 255, 0.8);\r\n    --bs-baton-changeform-spinner-overlay-color: #000;\r\n    --bs-baton-changeform-selector-item-border-color: #ccc;\r\n    --bs-baton-changeform-selector-available-title-bg: #fafafa;\r\n    --bs-baton-changeform-selector-chosen-title-bg: #f6f8fa;\r\n    --bs-baton-changeform-selector-chooser-bg: #eee;\r\n    --bs-baton-changeform-selector-button-bg: #eee;\r\n    --bs-baton-changeform-selector-button-color: #000;\r\n    --bs-baton-changeform-submit-row-bg: #EEF2F6;\r\n\r\n    /* calendar */\r\n    --bs-baton-calendar-bg: #fff;\r\n    --bs-baton-calendar-header-bg: #f5f5f5;\r\n    --bs-baton-calendar-header-color: #000;\r\n    --bs-baton-calendar-cell-th-bg: #fafafa;\r\n    --bs-baton-calendar-cell-bg: #fff;\r\n    --bs-baton-calendar-cell-color: #000;\r\n    --bs-baton-calendar-cell-nonday-bg: #f8f8f8;\r\n    --bs-baton-calendar-cell-th-border-color: #ccc;\r\n    --bs-baton-calendar-cell-td-border-color: #f0f0f0;\r\n    --bs-baton-calendar-shortcuts-bg: #eee;\r\n    --bs-baton-calendar-shortcuts-color: ##8e9b00;\r\n    --bs-baton-calendar-cancel-bg: #b3c100;\r\n    --bs-baton-calendar-cancel-color: #fff;\r\n\r\n    /* changehistory */\r\n    --bs-baton-changehistory-bg: #fff;\r\n    --bs-baton-changehistory-border-color: #fff;\r\n\r\n    /* delete confirmation */\r\n    --bs-baton-delete-confirmation-bg: #fff;\r\n    --bs-baton-delete-confirmation-border-color: #fff;\r\n\r\n    /* pagination */\r\n    --bs-baton-pagination-bg: #fff;\r\n    --bs-baton-pagination-hover-bg: #eee;\r\n    --bs-baton-pagination-border-color: #eee;\r\n    --bs-baton-pagination-color: #000;\r\n    --bs-baton-pagination-selected-bg: #455a64;\r\n    --bs-baton-pagination-selected-color: #fff;\r\n    --bs-baton-pagination-selected-border-color: #455a64;\r\n\r\n    /* modal */\r\n    --bs-baton-modal-back-btn-bg: #007eed;\r\n    --bs-baton-modal-back-btn-color: #fff;\r\n\r\n    /* admindocs */\r\n    --bs-baton-admindocs-module-bg: #fff;\r\n    --bs-baton-admindocs-module-header-bg: #f6f6f6;\r\n    --bs-baton-admindocs-module-header-border-color: #fff;\r\n    --bs-baton-admindocs-simple-bg: #ddd;\r\n    --bs-baton-admindocs-pre-bg: #333;\r\n    --bs-baton-admindocs-pre-color: #fff;\r\n    --bs-baton-admindocs-table-border-color: #e0e0e0;\r\n\r\n    /* footer */\r\n    --bs-baton-footer-bg: #E1E7F0;\r\n    --bs-baton-footer-color: #25476a;\r\n    --bs-baton-footer-link-color: #c07404;\r\n    --bs-baton-footer-link-hover-color: #000;\r\n    --bs-baton-footer-support-color: #25476a;\r\n    --bs-baton-footer-support-bg: #9fcc2e;\r\n}\r\n\r\n[data-bs-theme=\"dark\"] {\r\n    /* main */\r\n    --body-bg: #202020;\r\n    --darkened-bg: #212529;\r\n    --border-color: #495057;\r\n    --bs-primary: #7f1b27;\r\n    --bs-baton-body-bg: #202020;\r\n    --bs-baton-content-bg: #202020;\r\n    --bs-baton-content-title-bg: #303D46;\r\n    --bs-btn-active-color: #000;\r\n    --bs-btn-active-bg: #f90;\r\n    --bs-btn-active-border-color: #f90;\r\n    --bs-baton-accent-color: #b3c100;\r\n\r\n    /* utils */\r\n    --bs-baton-warning-color: #d39e00;\r\n    --bs-baton-danger-color: #f3b7bd;\r\n\r\n    /* login */\r\n    --bs-baton-login-bg: #292929;\r\n    --bs-baton-login-password-visibility-toggler-icon-fg: #999;\r\n\r\n    /* dashboard */\r\n    --bs-baton-dashboard-bg: #222;\r\n    --bs-baton-dashboard-module-bg: #333;\r\n    --bs-baton-dashboard-module-border-color: #333;\r\n    --bs-baton-dashboard-caption-bg: #333;\r\n    --bs-baton-dashboard-caption-color: #fff;\r\n    --bs-baton-dashboard-icon-color: #f90;\r\n    --bs-baton-dashboard-delete-bg: #dc3545;\r\n    --bs-baton-dashboard-add-bg: #28a745;\r\n    --bs-baton-dashboard-change-bg: #007eed;\r\n    --bs-baton-dashboard-action-list-border-color: #666;\r\n\r\n    /* navbar */\r\n    --bs-baton-navbar-bg: #101010;\r\n    --bs-baton-navbar-color: #fff;\r\n    --bs-baton-navbar-link-color: #fff;\r\n    --bs-baton-navbar-link-hover-color: #d32d41;\r\n    --bs-baton-navbar-dropdown-link-color: #fff;\r\n    --bs-baton-navbar-mobile-pane-bg: #263238;\r\n\r\n    /* menu */\r\n    --bs-baton-menu-bg: #161c20;\r\n    --bs-baton-menu-color: #fff;\r\n    --bs-baton-menu-branding-color: #fff;\r\n    --bs-baton-menu-gravatar-border-color: #fff;\r\n    --bs-baton-menu-user-links-color: #b3c100;\r\n    --bs-baton-menu-link-color: #ccc;\r\n    --bs-baton-menu-link-hover-color: #fff;\r\n    --bs-baton-menu-li-hover-bg: #152127;\r\n    --bs-baton-menu-active-voice-bg: #7f1b27;\r\n    --bs-baton-menu-active-voice-border-color: #666;\r\n    --bs-baton-menu-mobile-title-bg: #212121;\r\n    --bs-baton-menu-mobile-title-color: #fff;\r\n    --bs-baton-menu-mobile-back-bg: #1c2429;\r\n    --bs-baton-menu-selected-sub-bg: #263238;\r\n    --bs-baton-menu-title-bg: #11171a;\r\n    --bs-baton-menu-title-color: #2d3940;\r\n    --bs-baton-menu-voice-title-color: #d32d41;\r\n    --bs-baton-menu-voice-title-bg: #11171a;\r\n    --bs-baton-menu-branding-bg: #12171a;\r\n\r\n    /* search field */\r\n    --bs-baton-search-field-input-bg: #3b4d56;\r\n    --bs-baton-search-field-input-border-color: #1c2429;\r\n    --bs-baton-search-field-color: #fff;\r\n    --bs-baton-search-field-datalist-bg: #1c2429;\r\n    --bs-baton-search-field-icon-color: #6dbbff;\r\n    --bs-baton-search-field-link-color: #fff;\r\n    --bs-baton-search-field-selected-bg: #4f6875;\r\n    --bs-baton-search-field-selected-color: #fff;\r\n\r\n    /* breadcrumbs */\r\n    --bs-baton-breadcrumbs-bg: #212121;\r\n    --bs-baton-breadcrumbs-color: #aaa;\r\n\r\n    /* changelist */\r\n    --bs-baton-changelist-bg: #252525;\r\n    --bs-baton-changelist-border-color: #202020;\r\n    --bs-baton-changelist-toolbar-bg: #2a2a2a;\r\n    --bs-baton-changelist-toolbar-btn-bg: rgba(0, 0, 0, .2);\r\n    --bs-baton-changelist-toolbar-btn-color: #fff;\r\n    --bs-baton-changelist-toolbar-btn-hover-bg: #111;\r\n    --bs-baton-changelist-sort-icon-color: #999;\r\n    --bs-baton-changelist-filters-bg: #252525;\r\n    --bs-baton-changelist-filters-title-bg: #444;\r\n    --bs-baton-changelist-filters-title-color: #fff;\r\n    --bs-baton-changelist-filter-selected-border-color: #000;\r\n    --bs-baton-changelist-filters-clear-bg: #17a2b8;\r\n    --bs-baton-changelist-rl-head-bg: #f0f0f0;\r\n    --bs-baton-changelist-rl-head-color: inherit;\r\n    --bs-baton-changelist-rl-tr-odd-bg: rgba(0, 0, 0, .05);\r\n    --bs-baton-changelist-rl-tr-odd-color: inherit;\r\n    --bs-baton-changelist-rl-tr-selected-bg-color: #cfc4a8;\r\n    --bs-baton-changelist-rl-tr-selected-bg: #e1dac9;\r\n    --bs-baton-changelist-rl-tr-selected-color: inherit;\r\n\r\n    /* changeform */\r\n    --bs-baton-changeform-bg: #252525;\r\n    --bs-baton-changeform-border-color: #202020;\r\n    --bs-baton-changeform-collapse-entry-icon-color: #666;\r\n    --bs-baton-changeform-field-bg: #313131;\r\n    --bs-baton-changeform-field-row-error-bg: #843434;\r\n    --bs-baton-changeform-fieldset-title-bg: #380c11;\r\n    --bs-baton-changeform-fieldset-nested-title-bg: #27080c;\r\n    --bs-baton-changeform-inline-related-title-bg: #380c11; \r\n    --bs-baton-changeform-inline-related-title-border-color: #6b1621;\r\n    --bs-baton-changeform-inline-related-title-border-top-color: #6b1621;\r\n    --bs-baton-changeform-inline-changelink-bg: #ffe4dc;\r\n    --bs-baton-changeform-inline-tabular-original-bg: #000;\r\n    --bs-baton-changeform-inline-tabular-original-border-color: #111;\r\n    --bs-baton-changeform-help-text-color: #6dbbff;\r\n    --bs-baton-changeform-clockbox-title-bg: #333;\r\n    --bs-baton-changeform-clockbox-title-border-color: #222;\r\n    --bs-baton-changeform-spinner-overlay-bg: rgba(0, 0, 0, .8);\r\n    --bs-baton-changeform-spinner-overlay-color: #fff;\r\n    --bs-baton-changeform-selector-item-border-color: #222;\r\n    --bs-baton-changeform-selector-available-title-bg: #333;\r\n    --bs-baton-changeform-selector-chosen-title-bg: #323232;\r\n    --bs-baton-changeform-selector-chooser-bg: #222;\r\n    --bs-baton-changeform-selector-button-bg: #111;\r\n    --bs-baton-changeform-selector-button-color: #fff;\r\n    --bs-baton-changeform-submit-row-bg: #1c2429;\r\n\r\n    /* calendar */\r\n    --bs-baton-calendar-bg: #111;\r\n    --bs-baton-calendar-header-bg: #666;\r\n    --bs-baton-calendar-header-color: #fff;\r\n    --bs-baton-calendar-cell-th-bg: #202020;\r\n    --bs-baton-calendar-cell-bg: #222;\r\n    --bs-baton-calendar-cell-color: #fff;\r\n    --bs-baton-calendar-cell-nonday-bg: #303030;\r\n    --bs-baton-calendar-cell-th-border-color: #333;\r\n    --bs-baton-calendar-cell-td-border-color: #222;\r\n    --bs-baton-calendar-shortcuts-bg: #404040;\r\n    --bs-baton-calendar-shortcuts-color: #b3c100;\r\n    --bs-baton-calendar-cancel-bg: #b3c100;\r\n    --bs-baton-calendar-shortcuts-color: #fff;\r\n\r\n    /* changehistory */\r\n    --bs-baton-changehistory-bg: #222;\r\n    --bs-baton-changehistory-border-color: #222;\r\n\r\n    /* delete confirmation */\r\n    --bs-baton-delete-confirmation-bg: #222;\r\n    --bs-baton-delete-confirmation-border-color: #222;\r\n\r\n    /* pagination */\r\n    --bs-baton-pagination-bg: #222;\r\n    --bs-baton-pagination-hover-bg: #111;\r\n    --bs-baton-pagination-border-color: #111;\r\n    --bs-baton-pagination-color: #fff;\r\n    --bs-baton-pagination-selected-bg: #666;\r\n    --bs-baton-pagination-selected-color: #fff;\r\n    --bs-baton-pagination-selected-border-color: #455a64;\r\n\r\n    /* modal */\r\n    --bs-baton-modal-back-btn-bg: #007eed;\r\n    --bs-baton-modal-back-btn-color: #fff;\r\n\r\n    /* admindocs */\r\n    --bs-baton-admindocs-module-bg: #222;\r\n    --bs-baton-admindocs-module-header-bg: #333;\r\n    --bs-baton-admindocs-module-header-border-color: #000;\r\n    --bs-baton-admindocs-simple-bg: #444;\r\n    --bs-baton-admindocs-pre-bg: #333;\r\n    --bs-baton-admindocs-pre-color: #fff;\r\n    --bs-baton-admindocs-table-border-color: #202020;\r\n\r\n    /* footer */\r\n    --bs-baton-footer-bg: #1e1e1e;\r\n    --bs-baton-footer-color: #fff;\r\n    --bs-baton-footer-link-color: #b3c100;\r\n    --bs-baton-footer-link-hover-color: #848e00;\r\n    --bs-baton-footer-support-color: #fff;\r\n    --bs-baton-footer-support-bg: #111;\r\n}",
+    "active": false
+  }
+},
+{
+  "model": "baton.batontheme",
+  "pk": 3,
+  "fields": {
+    "name": "Light3",
+    "theme": "/* BATON */\r\n:root, [data-bs-theme=\"light\"] {\r\n    /* main */\r\n    --body-bg: #fff;\r\n    --darkened-bg: #fff;\r\n    --border-color: #dee2e6;\r\n    --bs-baton-body-bg: #fff;\r\n    --bs-baton-content-bg: #fff;\r\n    --bs-baton-content-title-bg: #fff;\r\n    --bs-btn-active-color: #fff;\r\n    --bs-btn-active-bg: #fa9f1b;\r\n    --bs-btn-active-border-color: #fa9f1b;\r\n    --bs-baton-accent-color: #9fcc2e\r\n\r\n    /* utils */\r\n    --bs-baton-warning-color: #d39e00;\r\n    --bs-baton-danger-color: #dc3545;\r\n\r\n    /* login */\r\n    --bs-baton-login-bg: #fff;\r\n    --bs-baton-login-password-visibility-toggler-icon-fg: #999;\r\n\r\n    /* dashboard */\r\n    --bs-baton-dashboard-bg: #fff;\r\n    --bs-baton-dashboard-module-bg: #fff;\r\n    --bs-baton-dashboard-module-border-color: #E1E7F0;\r\n    --bs-baton-dashboard-caption-bg: #f6f6f6;\r\n    --bs-baton-dashboard-caption-color: #000;\r\n    --bs-baton-dashboard-icon-color: #9fcc2e;\r\n    --bs-baton-dashboard-delete-bg: #dc3545;\r\n    --bs-baton-dashboard-add-bg: #fa9f1b;\r\n    --bs-baton-dashboard-change-bg: #007eed;\r\n    --bs-baton-dashboard-action-list-border-color: #e7e7e7;\r\n\r\n    /* navbar */\r\n    --bs-baton-navbar-bg: #25476a;\r\n    --bs-baton-navbar-color: #fff;\r\n    --bs-baton-navbar-link-color: #fff;\r\n    --bs-baton-navbar-link-hover-color: #d32d41;\r\n    --bs-baton-navbar-dropdown-link-color: #000;\r\n    --bs-baton-navbar-mobile-pane-bg: #263238;\r\n\r\n    /* menu */\r\n    --bs-baton-menu-bg: #EDF1F6;\r\n    --bs-baton-menu-color: #000;\r\n    --bs-baton-menu-branding-color: #fff;\r\n    --bs-baton-menu-gravatar-border-color: #fff;\r\n    --bs-baton-menu-user-links-color: #fa9f1b;\r\n    --bs-baton-menu-link-color: #25476a;\r\n    --bs-baton-menu-link-hover-color: #03a9f4;\r\n    --bs-baton-menu-li-hover-bg: #f8f8f8;\r\n    --bs-baton-menu-active-voice-bg: #fff;\r\n    --bs-baton-menu-active-voice-border-color: #fff;\r\n    --bs-baton-menu-mobile-title-bg: #25476a;\r\n    --bs-baton-menu-mobile-title-color: #EDF1F6;\r\n    --bs-baton-menu-mobile-back-bg: #E1E7F0;\r\n    --bs-baton-menu-selected-sub-bg: #EDF1F6;\r\n    --bs-baton-menu-title-bg: #EDF1F6;\r\n    --bs-baton-menu-voice-title-color: #25476a;\r\n    --bs-baton-menu-voice-title-bg: #EDF1F6;\r\n    --bs-baton-menu-branding-bg: #25476a;\r\n\r\n    /* search field */\r\n    --bs-baton-search-field-input-bg: #fff;\r\n    --bs-baton-search-field-input-border-color: #e0e0e0;\r\n    --bs-baton-search-field-color: #000;\r\n    --bs-baton-search-field-datalist-bg: #25476a;\r\n    --bs-baton-search-field-icon-color: #fa9f1b;\r\n    --bs-baton-search-field-link-color: #fff;\r\n    --bs-baton-search-field-selected-bg: #03a9f4;\r\n    --bs-baton-search-field-selected-color: #fff;\r\n\r\n    /* breadcrumbs */\r\n    --bs-baton-breadcrumbs-bg: #fff;\r\n    --bs-baton-breadcrumbs-link-color: #25476a;\r\n    --bs-baton-breadcrumbs-color: #007eed;\r\n\r\n    /* changelist */\r\n    --bs-baton-changelist-bg: #fff;\r\n    --bs-baton-changelist-border-color: #fff;\r\n    --bs-baton-changelist-toolbar-bg: #E1E7F0;\r\n    --bs-baton-changelist-toolbar-btn-bg: #f0f0f0;\r\n    --bs-baton-changelist-toolbar-btn-color: #000;\r\n    --bs-baton-changelist-toolbar-btn-hover-bg: #fafafa;\r\n    --bs-baton-changelist-sort-icon-color: #999;\r\n    --bs-baton-changelist-filters-bg: #fafafa;\r\n    --bs-baton-changelist-filters-title-bg: #263238;\r\n    --bs-baton-changelist-filters-title-color: #fff;\r\n    --bs-baton-changelist-filter-selected-border-color: #000;\r\n    --bs-baton-changelist-filters-clear-bg: #17a2b8;\r\n    --bs-baton-changelist-rl-head-bg: #f0f0f0;\r\n    --bs-baton-changelist-rl-head-color: inherit;\r\n    --bs-baton-changelist-rl-tr-odd-bg: rgba(0, 0, 0, 0.01);\r\n    --bs-baton-changelist-rl-tr-odd-color: inherit;\r\n    --bs-baton-changelist-rl-tr-selected-bg-color: #EDF1F6;\r\n    --bs-baton-changelist-rl-tr-selected-bg: #EDF1F6;\r\n    --bs-baton-changelist-rl-tr-selected-color: inherit;\r\n\r\n    /* changeform */\r\n    --bs-baton-changeform-bg: #fff;\r\n    --bs-baton-changeform-border-color: #fff;\r\n    --bs-baton-changeform-collapse-entry-icon-color: #666;\r\n    --bs-baton-changeform-field-bg: #fff;\r\n    --bs-baton-changeform-field-row-error-bg: #f2dede;\r\n    --bs-baton-changeform-fieldset-title-bg: #f6f8fa;\r\n    --bs-baton-changeform-fieldset-nested-title-bg: #fbebed;\r\n    --bs-baton-changeform-inline-related-title-bg: #fafafa;\r\n    --bs-baton-changeform-inline-related-title-border-color: #eee;\r\n    --bs-baton-changeform-inline-related-title-border-top-color: #eee;\r\n    --bs-baton-changeform-inline-changelink-bg: #ffe4dc;\r\n    --bs-baton-changeform-inline-tabular-original-bg: #fafafa;\r\n    --bs-baton-changeform-inline-tabular-original-border-color: #eee;\r\n    --bs-baton-changeform-help-text-color: #007eed;\r\n    --bs-baton-changeform-clockbox-title-bg: #eee;\r\n    --bs-baton-changeform-clockbox-title-border-color: #ddd;\r\n    --bs-baton-changeform-spinner-overlay-bg: rgba(255, 255, 255, 0.8);\r\n    --bs-baton-changeform-spinner-overlay-color: #000;\r\n    --bs-baton-changeform-selector-item-border-color: #ccc;\r\n    --bs-baton-changeform-selector-available-title-bg: #fafafa;\r\n    --bs-baton-changeform-selector-chosen-title-bg: #f6f8fa;\r\n    --bs-baton-changeform-selector-chooser-bg: #eee;\r\n    --bs-baton-changeform-selector-button-bg: #eee;\r\n    --bs-baton-changeform-selector-button-color: #000;\r\n    --bs-baton-changeform-submit-row-bg: #EEF2F6;\r\n\r\n    /* calendar */\r\n    --bs-baton-calendar-bg: #fff;\r\n    --bs-baton-calendar-header-bg: #f5f5f5;\r\n    --bs-baton-calendar-header-color: #000;\r\n    --bs-baton-calendar-cell-th-bg: #fafafa;\r\n    --bs-baton-calendar-cell-bg: #fff;\r\n    --bs-baton-calendar-cell-color: #000;\r\n    --bs-baton-calendar-cell-nonday-bg: #f8f8f8;\r\n    --bs-baton-calendar-cell-th-border-color: #ccc;\r\n    --bs-baton-calendar-cell-td-border-color: #f0f0f0;\r\n    --bs-baton-calendar-shortcuts-bg: #eee;\r\n    --bs-baton-calendar-shortcuts-color: ##8e9b00;\r\n    --bs-baton-calendar-cancel-bg: #b3c100;\r\n    --bs-baton-calendar-cancel-color: #fff;\r\n\r\n    /* changehistory */\r\n    --bs-baton-changehistory-bg: #fff;\r\n    --bs-baton-changehistory-border-color: #fff;\r\n\r\n    /* delete confirmation */\r\n    --bs-baton-delete-confirmation-bg: #fff;\r\n    --bs-baton-delete-confirmation-border-color: #fff;\r\n\r\n    /* pagination */\r\n    --bs-baton-pagination-bg: #fff;\r\n    --bs-baton-pagination-hover-bg: #eee;\r\n    --bs-baton-pagination-border-color: #eee;\r\n    --bs-baton-pagination-color: #000;\r\n    --bs-baton-pagination-selected-bg: #455a64;\r\n    --bs-baton-pagination-selected-color: #fff;\r\n    --bs-baton-pagination-selected-border-color: #455a64;\r\n\r\n    /* modal */\r\n    --bs-baton-modal-back-btn-bg: #007eed;\r\n    --bs-baton-modal-back-btn-color: #fff;\r\n\r\n    /* admindocs */\r\n    --bs-baton-admindocs-module-bg: #fff;\r\n    --bs-baton-admindocs-module-header-bg: #f6f6f6;\r\n    --bs-baton-admindocs-module-header-border-color: #fff;\r\n    --bs-baton-admindocs-simple-bg: #ddd;\r\n    --bs-baton-admindocs-pre-bg: #333;\r\n    --bs-baton-admindocs-pre-color: #fff;\r\n    --bs-baton-admindocs-table-border-color: #e0e0e0;\r\n\r\n    /* footer */\r\n    --bs-baton-footer-bg: #E1E7F0;\r\n    --bs-baton-footer-color: #25476a;\r\n    --bs-baton-footer-link-color: #c07404;\r\n    --bs-baton-footer-link-hover-color: #000;\r\n    --bs-baton-footer-support-color: #25476a;\r\n    --bs-baton-footer-support-bg: #9fcc2e;\r\n}",
+    "active": false
+  }
+}
+]

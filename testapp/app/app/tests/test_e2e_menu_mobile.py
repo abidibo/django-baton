@@ -1,95 +1,57 @@
-import time
-
-from django.test import TestCase
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-
-from .utils import element_has_css_class, make_driver
-
-import os
-
-os.environ["WDM_LOG_LEVEL"] = "0"
+from .utils import PlaywrightTestCase
 
 
-class TestBatonMenuMobile(TestCase):
+class TestBatonMenuMobile(PlaywrightTestCase):
+    viewport = {"width": 480, "height": 600}
+
     def setUp(self):
-        self.driver = make_driver()
-        self.driver.set_window_size(480, 600)
-        self.driver.implicitly_wait(10)
+        super().setUp()
         self.login()
-        time.sleep(2)
+        self.wait_baton_ready()
 
-    def tearDown(self):
-        self.driver.quit()
+    # The mobile navbar is only translated off-screen (not display:none), so we
+    # check its computed position rather than visibility.
+    def _wait_navbar_hidden(self):
+        self.page.wait_for_function(
+            """() => {
+                const el = document.querySelector('.sidebar-menu');
+                const s = getComputedStyle(el);
+                return (parseInt(s.left) || 0) + (parseInt(s.width) || 0) <= 0;
+            }"""
+        )
 
-    def login(self):
-        self.driver.get("http://localhost:8000/admin")
-        username_field = self.driver.find_element(By.ID, "id_username")
-        password_field = self.driver.find_element(By.ID, "id_password")
-        button = self.driver.find_element(By.CSS_SELECTOR, "input[type=submit]")
+    def _wait_navbar_visible(self):
+        self.page.wait_for_function(
+            """() => {
+                const el = document.querySelector('.sidebar-menu');
+                return (parseInt(getComputedStyle(el).left) || 0) === 0;
+            }"""
+        )
 
-        username_field.send_keys("admin")
-        time.sleep(1)
-        password_field.send_keys("admin")
-        time.sleep(1)
-        button.click()
-
-    # selenium sees the navbar as visible because it's just moved to the left,
-    # we cannot use is_displayed method
-    def navbar_is_invisible(self, navbar):
-        left = int(navbar.value_of_css_property("left").replace("px", ""))
-        width = int(navbar.value_of_css_property("width").replace("px", ""))
-        return left + width <= 0
-
-    def navbar_is_visible(self, navbar):
-        left = int(navbar.value_of_css_property("left").replace("px", ""))
-        return left == 0
+    def _body_classes(self):
+        return self.page.locator("body").get_attribute("class").split()
 
     def test_menu(self):
-        # Wait until baton is ready
-        wait = WebDriverWait(self.driver, 10)
-        wait.until(element_has_css_class((By.TAG_NAME, "body"), "baton-ready"))
-        time.sleep(2)
-        navbar = self.driver.find_element(By.CLASS_NAME, "sidebar-menu")
-        self.assertEqual(
-            "menu-open"
-            in self.driver.find_element(By.TAG_NAME, "body")
-            .get_attribute("class")
-            .split(),
-            False,
-        )
-        self.assertEqual(self.navbar_is_invisible(navbar), True)
+        page = self.page
 
-        toggler = self.driver.find_element(By.CSS_SELECTOR, ".navbar-toggler")
-        toggler.click()
-        time.sleep(2)
-        self.assertEqual(self.navbar_is_visible(navbar), True)
-        self.assertEqual(
-            "menu-open"
-            in self.driver.find_element(By.TAG_NAME, "body")
-            .get_attribute("class")
-            .split(),
-            True,
-        )
-        root_voices = navbar.find_elements(By.CSS_SELECTOR, ".depth-0 > li")
+        self.assertNotIn("menu-open", self._body_classes())
+        self._wait_navbar_hidden()
 
-        close_button = self.driver.find_element(By.CLASS_NAME, "toggle-menu")
-        close_button.click()
-        time.sleep(2)
-        self.assertEqual(
-            "menu-open"
-            in self.driver.find_element(By.TAG_NAME, "body")
-            .get_attribute("class")
-            .split(),
-            False,
-        )
-        self.assertEqual(self.navbar_is_invisible(navbar), True)
+        page.click(".navbar-toggler")
+        self._wait_navbar_visible()
+        self.assertIn("menu-open", self._body_classes())
 
-        toggler.click()
-        time.sleep(1)
+        root_voices = page.locator(".depth-0 > li")
+
+        page.click(".toggle-menu")
+        self._wait_navbar_hidden()
+        self.assertNotIn("menu-open", self._body_classes())
+
+        page.click(".navbar-toggler")
+        self._wait_navbar_visible()
 
         # system title voice
-        self.assertEqual(root_voices[0].get_attribute("innerText"), "lock\nSYSTEM")
-        self.assertEqual(root_voices[0].is_displayed(), True)
-        self.assertEqual("title" in root_voices[0].get_attribute("class").split(), True)
-        self.assertEqual(len(root_voices), 4)
+        self.assertEqual(root_voices.nth(0).inner_text(), "lock\nSYSTEM")
+        self.assertTrue(root_voices.nth(0).is_visible())
+        self.assertIn("title", root_voices.nth(0).get_attribute("class").split())
+        self.assertEqual(root_voices.count(), 4)
