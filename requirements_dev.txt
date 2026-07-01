@@ -1,2 +1,4 @@
 invoke
 sphinx_rtd_theme
+mypy
+django-stubs
