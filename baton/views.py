@@ -736,10 +736,17 @@ class SuggestTagsView(View):
                     or normalized in existing_by_label
                 ):
                     continue
+                confidence = self.get_confidence(item)
                 new.append(
                     {
                         "label": label,
-                        "confidence": self.get_confidence(item),
+                        "confidence": confidence,
+                        # New candidates below the threshold are shown but not
+                        # preselected, mirroring existing tags: the user opts in
+                        # instead of having to deselect a weakly related tag.
+                        "preselected": self.is_preselected(
+                            confidence, preselect_min_confidence
+                        ),
                     }
                 )
                 seen_new.add(normalized)

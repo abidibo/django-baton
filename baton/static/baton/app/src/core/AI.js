@@ -649,7 +649,17 @@ const AI = {
     const fieldValue = field.val()
     return Array.isArray(fieldValue) ? fieldValue : fieldValue ? [fieldValue] : []
   },
+  tagConfidenceBadge: function (confidence) {
+    if (confidence === null || confidence === undefined) {
+      return $()
+    }
+    const value = Number(confidence)
+    // green for high confidence, yellow for medium, red for low
+    const variant = value >= 0.8 ? 'bg-success' : value >= 0.5 ? 'bg-warning text-dark' : 'bg-danger'
+    return $('<span />', { class: `badge ${variant} ms-2` }).text(`${Math.round(value * 100)}%`)
+  },
   showTagSuggestions: function (field, suggestions, context) {
+    const self = this
     const existing = suggestions.existing || []
     const newTags = suggestions.new || []
     const content = $('<div />')
@@ -675,7 +685,10 @@ const AI = {
           .attr('data-tag-type', 'existing')
           .data('label', tag.label)
           .appendTo(row)
-        $('<label />', { class: 'form-check-label', for: id }).text(tag.label).appendTo(row)
+        $('<label />', { class: 'form-check-label', for: id })
+          .text(tag.label)
+          .append(self.tagConfidenceBadge(tag.confidence))
+          .appendTo(row)
       })
     }
 
@@ -690,15 +703,18 @@ const AI = {
           type: 'checkbox',
           id: id,
           value: tag.label,
-          checked: true,
+          // new candidates below the confidence threshold are shown unchecked
+          checked: tag.preselected !== false,
         })
           .attr('data-tag-type', 'new')
           .appendTo(row)
-        $('<label />', { class: 'form-check-label', for: id }).text(tag.label).appendTo(row)
+        $('<label />', { class: 'form-check-label', for: id })
+          .text(tag.label)
+          .append(self.tagConfidenceBadge(tag.confidence))
+          .appendTo(row)
       })
     }
 
-    const self = this
     const myModal = new Baton.Modal({
       title: this.t.get('tagSuggestions'),
       content: content,
