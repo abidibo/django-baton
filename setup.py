@@ -14,6 +14,8 @@ setup(
     version="5.4.1",
     packages=["baton", "baton.autodiscover", "baton.templatetags"],
     include_package_data=True,
+    package_data={"baton": ["py.typed"]},
+    zip_safe=False,
     license="MIT License",
     description="A cool, modern and responsive django admin application",
     long_description=README,
@@ -51,6 +53,7 @@ setup(
         "Framework :: Django :: 5.0",
         "Topic :: Software Development",
         "Topic :: Software Development :: User Interfaces",
+        "Typing :: Typed",
     ],
     project_urls={
         "Documentation": "https://django-baton.readthedocs.io/en/latest/",
