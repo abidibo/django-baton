@@ -1,0 +1,22 @@
+[tool.mypy]
+python_version = "3.10"
+plugins = ["mypy_django_plugin.main"]
+mypy_path = "."
+files = ["baton"]
+# Enforce that every function/method in baton carries type annotations, so the
+# library stays fully typed and future edits do not silently drop coverage.
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+# Analizza solo i moduli reali della libreria: fuori i file Python vendored
+# dentro gli asset statici (node_modules), le migrazioni auto-generate,
+# la testapp di sviluppo e gli artefatti di build.
+exclude = '(^|/)(baton/static|baton/migrations|build|testapp|docs)/'
+
+[tool.django-stubs]
+# Settings minimale dedicato al type-checking (non usa la testapp di sviluppo).
+django_settings_module = "mypy_django_settings"
+
+[[tool.mypy.overrides]]
+# requests non distribuisce stub inline; evitiamo di aggiungere types-requests.
+module = ["requests.*"]
+ignore_missing_imports = true
